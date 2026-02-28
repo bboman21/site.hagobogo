@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 
 import tailwindcss from '@tailwindcss/vite'
 
-// https://vite.dev/config/
+// Vite 기본 설정 파일
 export default defineConfig({
   base: './',
   plugins: [react(), tailwindcss()],

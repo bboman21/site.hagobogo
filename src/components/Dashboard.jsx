@@ -122,7 +122,7 @@ export default function Dashboard() {
                 return parsedSales;
             }
         } catch {
-            // Ignore storage errors and fall back to the default counter.
+            // 저장소 접근이 막혀 있으면 기본 카운터 값으로 동작
         }
 
         return 100000;
@@ -141,7 +141,7 @@ export default function Dashboard() {
                 return savedLanguage;
             }
         } catch {
-            // Ignore storage errors and use the default language.
+            // 저장소 접근이 막혀 있으면 기본 언어로 동작
         }
 
         return 'EN';
@@ -175,7 +175,7 @@ export default function Dashboard() {
         try {
             window.localStorage.setItem(SALES_STORAGE_KEY, String(sales));
         } catch {
-            // Ignore storage errors so the counter still works in restricted environments.
+            // 제한된 환경에서도 카운터 기능이 유지되도록 저장 오류는 무시
         }
     }, [sales]);
 
@@ -183,7 +183,7 @@ export default function Dashboard() {
         try {
             window.localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
         } catch {
-            // Ignore storage errors so language switching still works.
+            // 제한된 환경에서도 언어 전환이 유지되도록 저장 오류는 무시
         }
     }, [language]);
 

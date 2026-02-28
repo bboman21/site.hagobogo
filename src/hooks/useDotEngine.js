@@ -10,12 +10,12 @@ const ACCELERATION_GAIN_PER_STEP = 1.1;
 export default function useDotEngine(onHit, collisionRadius) {
     const [dots, setDots] = useState([]);
     const requestRef = useRef();
-    const dotsRef = useRef([]); // To avoid stale closures in RAF
+    const dotsRef = useRef([]); // RAF 내부에서 오래된 상태를 참조하지 않도록 유지
     const lastTimeRef = useRef();
     const spawnTimerRef = useRef(0);
     const onHitRef = useRef(onHit);
 
-    // Keep onHit ref updated
+    // 최신 onHit 함수를 항상 참조하도록 동기화
     useEffect(() => {
         onHitRef.current = onHit;
     }, [onHit]);
@@ -69,12 +69,12 @@ export default function useDotEngine(onHit, collisionRadius) {
                 onHitRef.current();
             }
 
-            // Spawning logic
+            // 점 생성 타이밍 계산
             spawnTimerRef.current -= deltaTime;
             if (spawnTimerRef.current <= 0) {
                 const windowRadius = Math.max(window.innerWidth, window.innerHeight) / 2;
-                const spawnDistance = windowRadius + 300; // start well outside
-                const speed = 100 + Math.random() * 100; // 100 to 200 px/sec
+                const spawnDistance = windowRadius + 300; // 화면 바깥 충분한 거리에서 시작
+                const speed = 100 + Math.random() * 100; // 초당 100~200px 속도
                 const angle = Math.random() * Math.PI * 2;
 
                 nextDots.push({
@@ -87,12 +87,12 @@ export default function useDotEngine(onHit, collisionRadius) {
                     timeInAccelerationZone: 0,
                 });
 
-                // Next spawn in 3 to 6 seconds -> 10~20 per min
+                // 다음 생성은 3~6초 뒤로 설정
                 spawnTimerRef.current = 3000 + Math.random() * 3000;
             }
 
             dotsRef.current = nextDots;
-            setDots(nextDots); // trigger React render
+            setDots(nextDots); // 갱신된 점 목록으로 화면을 다시 그림
         }
 
         lastTimeRef.current = time;
@@ -100,7 +100,7 @@ export default function useDotEngine(onHit, collisionRadius) {
     }, [collisionRadius]);
 
     useEffect(() => {
-        spawnTimerRef.current = 1000; // first spawn lightly delayed
+        spawnTimerRef.current = 1000; // 첫 생성은 약간 지연해서 시작
         requestRef.current = requestAnimationFrame(updateDots);
         return () => cancelAnimationFrame(requestRef.current);
     }, [updateDots]);
