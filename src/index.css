@@ -1,0 +1,192 @@
+@import "tailwindcss";
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #bfc5cc;
+  font-family: 'Barlow Condensed', sans-serif;
+  color: #bfc5cc;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes salesPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  35% {
+    transform: scale(1.025);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes sphereLinePulse {
+  0% {
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translate(-50%, -50%) scale(1.01);
+  }
+
+  100% {
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.sphere_line {
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.text-cta {
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #4d545a;
+  font-family: 'Barlow Condensed', sans-serif;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 180ms ease;
+}
+
+.text-cta:hover {
+  color: #ffffff;
+}
+
+.text-cta:focus-visible {
+  outline: none;
+  color: #ffffff;
+}
+
+.text-cta-unified {
+  font-size: 64px;
+  font-weight: 300;
+}
+
+.text-nav-cta {
+  font-size: 21px;
+  font-weight: 300;
+}
+
+.news-ticker-wrap {
+  position: absolute;
+  top: 120px;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.news-ticker-track {
+  display: flex;
+  width: max-content;
+  white-space: nowrap;
+  will-change: transform;
+  animation: newsTickerMove 42s linear infinite;
+}
+
+.news-ticker-sequence {
+  display: flex;
+  align-items: center;
+  column-gap: 300px;
+}
+
+.news-ticker-text {
+  margin: 0;
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 1;
+}
+
+.sales-counter-value {
+  font-size: 110px;
+}
+
+.main-content-stack {
+  top: 220px;
+  max-height: calc(100vh - 220px);
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .sales-counter-value {
+    font-size: 80px;
+  }
+}
+
+@media (max-width: 400px) {
+  .sales-counter-value {
+    font-size: 64px;
+  }
+}
+
+@media (min-width: 768px) {
+  .main-content-stack {
+    top: 240px;
+    max-height: calc(100vh - 240px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .main-content-stack {
+    top: 260px;
+    max-height: calc(100vh - 260px);
+  }
+}
+
+.site-footer {
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100vw;
+  padding: 18px 16px 118px;
+  background: #d0d4da;
+  color: #4d545a;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.site-footer p {
+  margin: 0;
+}
+
+.site-footer-spacer {
+  height: 12px;
+}
+
+@keyframes newsTickerMove {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
