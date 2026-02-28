@@ -50,3 +50,8 @@
 - `site_hagobogo` 폴더가 Git 저장소가 아닌 상태임을 확인하고, 별도 저장소로 초기화하는 방향으로 정리
 - 커밋 대상에서 `node_modules`, `.DS_Store`를 제외하기 위한 `.gitignore`를 추가
 - 원격 저장소 `bboman21/site.hagobogo`로 커밋 및 푸시할 수 있도록 로컬 저장소 구성 준비
+
+## 2026-02-28 23:11 - GitHub 원격 푸시 및 배포 문서 보완
+- 로컬 저장소를 초기화하고 `hagobogo Landing Page Production` 커밋을 생성
+- 원격 저장소 `https://github.com/bboman21/site.hagobogo.git`의 기존 `Initial commit` 및 `LICENSE`를 보존하기 위해 병합 후 `main` 브랜치로 푸시
+- `README.md`를 GitHub Pages 배포 기준 문서로 재정리하고, 현재 저장소 구조에서는 `main` 브랜치의 `/ (root)`를 배포 대상으로 사용하는 것이 맞음을 명시

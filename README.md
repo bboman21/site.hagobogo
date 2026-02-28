@@ -1,27 +1,29 @@
-# HAGOBOGO Site
+# HAGOBOGO Landing Page
 
-## Local Run
+## Recommended GitHub Pages Target
 
-```bash
-npm install
-npm run dev
-```
+Use:
 
-Development opens the Vite entry at `app.html`.
+- Branch: `main`
+- Folder: `/ (root)`
 
-## Local Preview
+This repository is already structured for that setup.
 
-Build and open the production site locally with one command:
+- Root [index.html](/Users/chris/development/AntigravityWorks/site_hagobogo/index.html) redirects to [dist/index.html](/Users/chris/development/AntigravityWorks/site_hagobogo/dist/index.html)
+- The built site files are committed inside [dist](/Users/chris/development/AntigravityWorks/site_hagobogo/dist)
+- `public/.nojekyll` is included so GitHub Pages will not strip underscore-prefixed files if they are added later
 
-```bash
-npm run local
-```
+GitHub Pages does not publish from `dist/` directly, so `/ (root)` is the correct target for the current repository layout.
 
-This serves `dist/index.html` on a local HTTP server.
+## GitHub Pages Setup
 
-If you prefer double-click execution on macOS, run:
-
-- [preview.command](/Users/chris/development/AntigravityWorks/site_hagobogo/preview.command)
+1. Open the repository on GitHub.
+2. Go to `Settings > Pages`.
+3. Under `Build and deployment`, choose `Deploy from a branch`.
+4. Select branch `main`.
+5. Select folder `/ (root)`.
+6. Save the setting.
+7. Wait for GitHub to publish the Pages URL.
 
 ## Build
 
@@ -29,24 +31,28 @@ If you prefer double-click execution on macOS, run:
 npm run build
 ```
 
-Build output is created in `dist/`.
+Build output is created in [dist](/Users/chris/development/AntigravityWorks/site_hagobogo/dist).
 
-- `dist/index.html`: main deployment entry for GitHub Pages
-- `dist/app.html`: same app entry kept for the local redirect flow
-- `index.html`: root redirect file that opens `./dist/index.html` when you run it directly
+- [dist/index.html](/Users/chris/development/AntigravityWorks/site_hagobogo/dist/index.html): production entry used by the root redirect
+- [dist/app.html](/Users/chris/development/AntigravityWorks/site_hagobogo/dist/app.html): same app entry kept for the local redirect flow
 
-## GitHub Pages
+## Local Development
 
-Use the contents of `dist/` as the published site.
+```bash
+npm install
+npm run dev
+```
 
-1. Run `npm run build`
-2. Create a GitHub repository for the site
-3. Upload the files inside `dist/` to the repository root, or copy them into a `docs/` folder if you want Pages to publish from `docs/`
-4. In GitHub, open `Settings > Pages`
-5. Set `Build and deployment` to `Deploy from a branch`
-6. Choose the branch and folder that contains the built files:
-   - `/ (root)` if you uploaded the contents of `dist/` to the repo root
-   - `/docs` if you copied the contents of `dist/` into `docs/`
-7. Save, then wait for the Pages URL to be published
+Development opens the Vite entry at [app.html](/Users/chris/development/AntigravityWorks/site_hagobogo/app.html).
 
-If you open the repository root [index.html](/Users/chris/development/AntigravityWorks/site_hagobogo/index.html) locally, it redirects to the built site automatically.
+## Local Production Preview
+
+Run:
+
+```bash
+npm run local
+```
+
+This builds the site and serves [dist/index.html](/Users/chris/development/AntigravityWorks/site_hagobogo/dist/index.html) over HTTP.
+
+If you prefer double-click execution on macOS, use [preview.command](/Users/chris/development/AntigravityWorks/site_hagobogo/preview.command).
