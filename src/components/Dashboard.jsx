@@ -5,9 +5,28 @@ import DotEngine from './DotEngine';
 import DotEmptyEngine from './DotEmptyEngine';
 import logoHagobogo from '../../assets/svg/logo_haogobogo.svg';
 
+const SALES_STORAGE_KEY = 'sphere_count';
+
 export default function Dashboard() {
     const homeHref = `${import.meta.env.BASE_URL || './'}app.html`;
-    const [sales, setSales] = useState(100000);
+    const [sales, setSales] = useState(() => {
+        if (typeof window === 'undefined') {
+            return 100000;
+        }
+
+        try {
+            const savedSales = window.localStorage.getItem(SALES_STORAGE_KEY);
+            const parsedSales = Number(savedSales);
+
+            if (Number.isFinite(parsedSales) && parsedSales > 0) {
+                return parsedSales;
+            }
+        } catch {
+            // Ignore storage errors and fall back to the default counter.
+        }
+
+        return 100000;
+    });
     const [isPulsing, setIsPulsing] = useState(false);
     const [isLineHit, setIsLineHit] = useState(false);
     const [targetMetrics, setTargetMetrics] = useState({
@@ -30,6 +49,14 @@ export default function Dashboard() {
             }
         };
     }, []);
+
+    useEffect(() => {
+        try {
+            window.localStorage.setItem(SALES_STORAGE_KEY, String(sales));
+        } catch {
+            // Ignore storage errors so the counter still works in restricted environments.
+        }
+    }, [sales]);
 
     useEffect(() => {
         const updateTargetMetrics = () => {
@@ -84,9 +111,9 @@ export default function Dashboard() {
     }, []);
 
     return (
-        <div className="relative w-full h-full flex items-center justify-center overflow-hidden bg-[#bfc5cc] text-[#bfc5cc]">
+        <div className="relative w-full min-h-screen flex justify-center overflow-x-hidden bg-[#bfc5cc] text-[#bfc5cc]">
             {/* 실시간 파티클 배경 컨테이너 */}
-            <div className="absolute inset-0 w-full h-full pointer-events-none">
+            <div className="absolute inset-0 w-full h-full min-h-full pointer-events-none">
                 <DotEmptyEngine
                     targetCenter={targetMetrics.center}
                     sphereRadius={targetMetrics.sphereRadius}
@@ -108,14 +135,21 @@ export default function Dashboard() {
                 </a>
 
                 <div className="flex items-center gap-[24px]">
+                    <a
+                        href="https://hagobogo.me"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className="text-cta text-nav-cta group"
+                    >
+                        <span
+                            aria-hidden="true"
+                            className="material-symbols-outlined flex items-center justify-center text-[15px] leading-none text-[#4D545A] transition-colors duration-180 group-hover:text-white group-focus-visible:text-white"
+                        >
+                            local_mall
+                        </span>
+                    </a>
                     <button type="button" className="text-cta text-nav-cta">
-                        Store
-                    </button>
-                    <button type="button" className="text-cta text-nav-cta">
-                        Language
-                    </button>
-                    <button type="button" className="text-cta text-nav-cta">
-                        Menu
+                        EN
                     </button>
                 </div>
             </div>
@@ -147,7 +181,7 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            <div className="main-content-stack absolute left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-[40px]">
+            <div className="main-content-stack relative z-20 flex w-full flex-col items-center gap-[40px]">
                 <div ref={sphereGroupRef} className="relative flex items-center justify-center px-[20px] pt-[20px] pb-[20px] pointer-events-none">
                     <Sphere isLineHit={isLineHit} />
                     <div className="absolute inset-0 flex items-center justify-center">

@@ -6,8 +6,8 @@ export default function Sphere({ isLineHit }) {
         <div
             className="relative"
             style={{
-                width: 'clamp(320px, 58vmin, 840px)',
-                height: 'clamp(320px, 58vmin, 840px)',
+                width: 'clamp(320px, 58vw, 840px)',
+                height: 'clamp(320px, 58vw, 840px)',
             }}
         >
             <div

@@ -5,12 +5,16 @@ body,
 #root {
   margin: 0;
   padding: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  width: 100%;
+  min-height: 100vh;
   background-color: #bfc5cc;
   font-family: 'Barlow Condensed', sans-serif;
   color: #bfc5cc;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 @keyframes fadeIn {
@@ -86,8 +90,12 @@ body,
 }
 
 .text-nav-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-size: 21px;
-  font-weight: 300;
+  font-weight: 400;
+  min-height: 24px;
 }
 
 .news-ticker-wrap {
@@ -127,14 +135,17 @@ body,
 }
 
 .main-content-stack {
-  top: 220px;
-  max-height: calc(100vh - 220px);
-  overflow: hidden;
+  margin-top: 220px;
+  padding-bottom: 0;
 }
 
 @media (max-width: 900px) {
   .sales-counter-value {
     font-size: 80px;
+  }
+
+  .text-cta-unified {
+    font-size: 48px;
   }
 }
 
@@ -142,19 +153,21 @@ body,
   .sales-counter-value {
     font-size: 64px;
   }
+
+  .text-cta-unified {
+    font-size: 40px;
+  }
 }
 
 @media (min-width: 768px) {
   .main-content-stack {
-    top: 240px;
-    max-height: calc(100vh - 240px);
+    margin-top: 240px;
   }
 }
 
 @media (min-width: 1024px) {
   .main-content-stack {
-    top: 260px;
-    max-height: calc(100vh - 260px);
+    margin-top: 260px;
   }
 }
 
@@ -164,7 +177,7 @@ body,
   flex-direction: column;
   gap: 6px;
   width: 100vw;
-  padding: 18px 16px 118px;
+  padding: 18px 16px 80px;
   background: #d0d4da;
   color: #4d545a;
   font-size: 14px;

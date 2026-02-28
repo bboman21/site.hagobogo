@@ -1,5 +1,7 @@
 # HAGOBOGO Landing Page
 
+Page site URL: `https://bboman21.github.io/site.hagobogo/dist/index.html`
+
 ## Recommended GitHub Pages Target
 
 Use:
