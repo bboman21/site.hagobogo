@@ -1,26 +1,33 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { submitBusinessInquiry } from '../lib/inquiryApi';
+import { COUNTRIES } from '../constants/countries';
 
 const MAX_INQUIRY_LENGTH = 3000;
 
 const INITIAL_FORM_VALUES = {
     name: '',
     title: '',
+    country: '',
     companyName: '',
     email: '',
     inquiry: '',
 };
 
-const FIELD_ORDER = ['name', 'title', 'companyName', 'email', 'inquiry'];
+const FIELD_ORDER = ['name', 'title', 'country', 'companyName', 'email', 'inquiry'];
 
 export default function InquiryModal({ copy, language, onClose }) {
     const [formValues, setFormValues] = useState(INITIAL_FORM_VALUES);
     const [formErrors, setFormErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitState, setSubmitState] = useState(null);
+    const [isCountryDropdownOpen, setIsCountryDropdownOpen] = useState(false);
+    const [highlightedCountryIndex, setHighlightedCountryIndex] = useState(0);
     const firstInputRef = useRef(null);
     const fieldRefs = useRef({});
     const closeTimeoutRef = useRef(null);
+    const countryFieldRef = useRef(null);
+    const countryTriggerRef = useRef(null);
+    const countryOptionRefs = useRef([]);
 
     const inquiryLength = formValues.inquiry.length;
     const inquiryCountLabel = useMemo(
@@ -44,6 +51,11 @@ export default function InquiryModal({ copy, language, onClose }) {
     useEffect(() => {
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
+                if (isCountryDropdownOpen) {
+                    setIsCountryDropdownOpen(false);
+                    return;
+                }
+
                 onClose();
             }
         };
@@ -53,11 +65,48 @@ export default function InquiryModal({ copy, language, onClose }) {
         return () => {
             window.removeEventListener('keydown', handleKeyDown);
         };
-    }, [onClose]);
+    }, [isCountryDropdownOpen, onClose]);
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
+    useEffect(() => {
+        const handlePointerDown = (event) => {
+            if (!countryFieldRef.current?.contains(event.target)) {
+                setIsCountryDropdownOpen(false);
+            }
+        };
 
+        window.addEventListener('mousedown', handlePointerDown);
+
+        return () => {
+            window.removeEventListener('mousedown', handlePointerDown);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (!isCountryDropdownOpen) {
+            return;
+        }
+
+        const selectedIndex = COUNTRIES.indexOf(formValues.country);
+        setHighlightedCountryIndex(selectedIndex >= 0 ? selectedIndex : 0);
+    }, [formValues.country, isCountryDropdownOpen]);
+
+    useEffect(() => {
+        if (!isCountryDropdownOpen) {
+            return;
+        }
+
+        const targetOption = countryOptionRefs.current[highlightedCountryIndex];
+        if (!targetOption) {
+            return;
+        }
+
+        targetOption.focus();
+        targetOption.scrollIntoView({
+            block: 'nearest',
+        });
+    }, [highlightedCountryIndex, isCountryDropdownOpen]);
+
+    const updateFieldValue = (name, value) => {
         setFormValues(prev => ({
             ...prev,
             [name]: value,
@@ -73,6 +122,11 @@ export default function InquiryModal({ copy, language, onClose }) {
             delete nextErrors[name];
             return nextErrors;
         });
+    };
+
+    const handleChange = (event) => {
+        const { name, value } = event.target;
+        updateFieldValue(name, value);
     };
 
     const handleInputKeyDown = (fieldName) => (event) => {
@@ -96,7 +150,7 @@ export default function InquiryModal({ copy, language, onClose }) {
 
     const validateForm = () => {
         const nextErrors = {};
-        const requiredFields = ['name', 'companyName', 'email', 'inquiry'];
+        const requiredFields = ['name', 'country', 'companyName', 'email', 'inquiry'];
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
         requiredFields.forEach((fieldName) => {
@@ -110,6 +164,116 @@ export default function InquiryModal({ copy, language, onClose }) {
         }
 
         return nextErrors;
+    };
+
+    const focusCountryOption = (nextIndex) => {
+        const normalizedIndex = (nextIndex + COUNTRIES.length) % COUNTRIES.length;
+        setHighlightedCountryIndex(normalizedIndex);
+    };
+
+    const openCountryDropdown = () => {
+        const selectedIndex = COUNTRIES.indexOf(formValues.country);
+        setHighlightedCountryIndex(selectedIndex >= 0 ? selectedIndex : 0);
+        setIsCountryDropdownOpen(true);
+    };
+
+    const closeCountryDropdown = () => {
+        setIsCountryDropdownOpen(false);
+    };
+
+    const handleCountrySelect = (country) => {
+        updateFieldValue('country', country);
+        closeCountryDropdown();
+        requestAnimationFrame(() => {
+            countryTriggerRef.current?.focus();
+        });
+    };
+
+    const handleCountryTriggerKeyDown = (event) => {
+        if (event.nativeEvent.isComposing) {
+            return;
+        }
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+
+            if (!isCountryDropdownOpen) {
+                openCountryDropdown();
+                return;
+            }
+
+            focusCountryOption(highlightedCountryIndex + 1);
+        }
+
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+
+            if (!isCountryDropdownOpen) {
+                openCountryDropdown();
+                return;
+            }
+
+            focusCountryOption(highlightedCountryIndex - 1);
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+
+            if (isCountryDropdownOpen) {
+                handleCountrySelect(COUNTRIES[highlightedCountryIndex]);
+                return;
+            }
+
+            openCountryDropdown();
+        }
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeCountryDropdown();
+        }
+    };
+
+    const handleCountryOptionKeyDown = (index) => (event) => {
+        if (event.nativeEvent.isComposing) {
+            return;
+        }
+
+        if (event.key === 'ArrowDown') {
+            event.preventDefault();
+            focusCountryOption(index + 1);
+        }
+
+        if (event.key === 'ArrowUp') {
+            event.preventDefault();
+            focusCountryOption(index - 1);
+        }
+
+        if (event.key === 'Home') {
+            event.preventDefault();
+            focusCountryOption(0);
+        }
+
+        if (event.key === 'End') {
+            event.preventDefault();
+            focusCountryOption(COUNTRIES.length - 1);
+        }
+
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            handleCountrySelect(COUNTRIES[index]);
+        }
+
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            closeCountryDropdown();
+            requestAnimationFrame(() => {
+                countryTriggerRef.current?.focus();
+            });
+        }
+
+        if (event.key === 'Tab') {
+            closeCountryDropdown();
+        }
     };
 
     const handleSubmit = async (event) => {
@@ -145,9 +309,12 @@ export default function InquiryModal({ copy, language, onClose }) {
         } catch (error) {
             setSubmitState({
                 type: 'error',
-                message: error.code === 'MISSING_REQUEST_TOKEN'
-                    ? '요청 토큰이 설정되지 않았습니다.'
-                    : copy.submit.failure,
+                message:
+                    error.code === 'MISSING_INQUIRY_API_URL'
+                        ? 'Apps Script 저장 URL이 설정되지 않았습니다.'
+                        : error.code === 'MISSING_REQUEST_TOKEN'
+                            ? '요청 토큰이 설정되지 않았습니다.'
+                            : copy.submit.failure,
             });
             console.error('Business inquiry submit failed', error);
         } finally {
@@ -206,6 +373,70 @@ export default function InquiryModal({ copy, language, onClose }) {
                                 onKeyDown={handleInputKeyDown('title')}
                                 className={`inquiry-field-input ${formErrors.title ? 'is-error' : ''}`}
                             />
+                        </div>
+
+                        <div className="inquiry-field-group">
+                            <div className="inquiry-field-heading">
+                                <label htmlFor="inquiry-country" className="inquiry-field-label">{copy.fields.country}</label>
+                                <span className="inquiry-field-warning">{formErrors.country || ''}</span>
+                            </div>
+                            <div className="inquiry-field-select-wrap" ref={countryFieldRef}>
+                                <button
+                                    id="inquiry-country"
+                                    ref={(node) => {
+                                        fieldRefs.current.country = node;
+                                        countryTriggerRef.current = node;
+                                    }}
+                                    type="button"
+                                    className={`inquiry-field-select ${formErrors.country ? 'is-error' : ''}`}
+                                    aria-haspopup="listbox"
+                                    aria-expanded={isCountryDropdownOpen}
+                                    aria-controls="inquiry-country-listbox"
+                                    onClick={() => {
+                                        if (isCountryDropdownOpen) {
+                                            closeCountryDropdown();
+                                            return;
+                                        }
+
+                                        openCountryDropdown();
+                                    }}
+                                    onKeyDown={handleCountryTriggerKeyDown}
+                                >
+                                    <span className={`inquiry-field-select-value ${formValues.country ? '' : 'is-placeholder'}`}>
+                                        {formValues.country || copy.fields.countryPlaceholder}
+                                    </span>
+                                    <span
+                                        className={`inquiry-field-select-icon ${isCountryDropdownOpen ? 'is-open' : ''}`}
+                                        aria-hidden="true"
+                                    />
+                                </button>
+                                {isCountryDropdownOpen && (
+                                    <ul
+                                        id="inquiry-country-listbox"
+                                        className="inquiry-field-select-dropdown"
+                                        role="listbox"
+                                        aria-labelledby="inquiry-country"
+                                    >
+                                        {COUNTRIES.map((country, index) => (
+                                            <li key={country} role="presentation">
+                                                <button
+                                                    ref={(node) => {
+                                                        countryOptionRefs.current[index] = node;
+                                                    }}
+                                                    type="button"
+                                                    role="option"
+                                                    aria-selected={formValues.country === country}
+                                                    className={`inquiry-field-select-option ${formValues.country === country ? 'is-selected' : ''}`}
+                                                    onClick={() => handleCountrySelect(country)}
+                                                    onKeyDown={handleCountryOptionKeyDown(index)}
+                                                >
+                                                    {country}
+                                                </button>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
+                            </div>
                         </div>
 
                         <div className="inquiry-field-group">
@@ -269,14 +500,12 @@ export default function InquiryModal({ copy, language, onClose }) {
                     </div>
 
                     <div className="inquiry-modal-actions">
-                        {submitState && (
-                            <p
-                                className={`inquiry-submit-message ${submitState.type === 'success' ? 'is-success' : 'is-error'}`}
-                                aria-live="polite"
-                            >
-                                {submitState.message}
-                            </p>
-                        )}
+                        <p
+                            className={`inquiry-submit-message ${submitState ? (submitState.type === 'success' ? 'is-success' : 'is-error') : 'is-idle'}`}
+                            aria-live="polite"
+                        >
+                            {submitState?.message || ''}
+                        </p>
                         <button type="button" className="inquiry-action-button is-cancel" onClick={onClose} disabled={isSubmitting}>
                             {copy.buttons.cancel}
                         </button>

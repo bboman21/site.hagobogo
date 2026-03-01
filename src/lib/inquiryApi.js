@@ -1,13 +1,5 @@
-const DEFAULT_INQUIRY_API_URL = '/api/business-inquiry';
-
 function getInquiryApiUrl() {
-    const configuredApiUrl = import.meta.env.VITE_BUSINESS_INQUIRY_API_URL?.trim();
-
-    if (configuredApiUrl) {
-        return configuredApiUrl;
-    }
-
-    return DEFAULT_INQUIRY_API_URL;
+    return import.meta.env.VITE_BUSINESS_INQUIRY_API_URL?.trim() || '';
 }
 
 function getInquiryRequestToken() {
@@ -15,7 +7,14 @@ function getInquiryRequestToken() {
 }
 
 export async function submitBusinessInquiry(payload) {
+    const inquiryApiUrl = getInquiryApiUrl();
     const requestToken = getInquiryRequestToken();
+
+    if (!inquiryApiUrl) {
+        const error = new Error('문의 저장용 Apps Script URL이 설정되지 않았습니다.');
+        error.code = 'MISSING_INQUIRY_API_URL';
+        throw error;
+    }
 
     if (!requestToken) {
         const error = new Error('문의 저장용 요청 토큰이 설정되지 않았습니다.');
@@ -23,10 +22,10 @@ export async function submitBusinessInquiry(payload) {
         throw error;
     }
 
-    const response = await fetch(getInquiryApiUrl(), {
+    const response = await fetch(inquiryApiUrl, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'text/plain;charset=utf-8',
         },
         body: JSON.stringify({
             ...payload,

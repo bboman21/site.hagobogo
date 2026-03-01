@@ -80,6 +80,7 @@ Google 공식 문서 기준으로 아래 흐름이 가능합니다.
 2. 사용자가 아래 필드를 입력한다.
    - Name
    - Job Title
+   - Country
    - Company Name
    - Email
    - Inquiry
@@ -93,25 +94,31 @@ Google 공식 문서 기준으로 아래 흐름이 가능합니다.
 
 권장 열 순서는 아래와 같습니다.
 
-1. Submitted At
-2. Language
+1. Date
+2. Time
 3. Name
 4. Job Title
-5. Company Name
-6. Email
-7. Inquiry
+5. Country
+6. Company Name
+7. Email
+8. Inquiry
 
 예시:
 
 ```text
-2026-03-01T14:00:00.000Z | EN | Chris | Marketing Manager | ABC Inc. | hello@example.com | 문의 내용
+2026-03-01 | 14:00:00 | Chris | Marketing Manager | South Korea | ABC Inc. | hello@example.com | 문의 내용
 ```
 
 이 구조가 좋은 이유:
 
-- 접수 시각을 먼저 볼 수 있다.
-- 언어 기준으로 필터링 가능하다.
+- 날짜와 시간을 분리해 보면 정렬과 확인이 더 쉽다.
+- 국가 기준으로 리드를 분류하거나 담당자를 나누기 쉽다.
 - 회사명, 이메일, 문의 내용을 한 줄에서 바로 볼 수 있다.
+
+참고:
+
+- 프론트 payload 키 이름은 `country`를 유지합니다.
+- 실제 시트 헤더도 운영 파일 기준에 맞춰 `Country`를 사용합니다.
 
 ## 8. Apps Script 웹앱 역할
 

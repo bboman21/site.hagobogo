@@ -354,6 +354,123 @@
 - 요청 토큰이 비어 있으면 전송 전에 `MISSING_REQUEST_TOKEN` 오류를 발생시키도록 보강
 - `.env.example`, `.env.production.example`에 `VITE_BUSINESS_INQUIRY_REQUEST_TOKEN` 예시 값을 추가하고 `InquiryModal.jsx`에서 해당 오류를 사용자 메시지로 구분해 표시하도록 정리
 
+## 2026-03-01 23:34 - inquiryApi Google Apps Script 기준 전환
+- `src/lib/inquiryApi.js`가 더 이상 Vercel 상대경로를 기본값으로 쓰지 않고 `VITE_BUSINESS_INQUIRY_API_URL`이 반드시 필요하도록 수정
+- Google Apps Script 웹앱이 받기 쉬운 형태로 요청 `Content-Type`을 `text/plain;charset=utf-8`로 조정하고 JSON 본문은 그대로 유지
+- `.env.example`, `.env.production.example`의 `VITE_BUSINESS_INQUIRY_API_URL` 예시를 Apps Script `/exec` URL 기준으로 변경하고 `InquiryModal.jsx`에서 URL 누락 오류를 별도 메시지로 표시하도록 보강
+
+## 2026-03-01 23:39 - Google Sheets 요청 토큰 최종값 고정
+- Apps Script 2차 초안 문서와 환경 변수 예시 파일의 `requestToken` 값을 `HGBG_INQUIRY_2026_x7Lq2mP9vK4sN8aT`로 통일
+- 프론트 `.env` 예시와 Apps Script `EXPECTED_REQUEST_TOKEN` 예시가 서로 어긋나지 않도록 최종 기준값을 하나로 정리
+
+## 2026-03-01 23:51 - Business Inquiries Country 드롭다운 추가
+- `Business Inquiries` 팝업에 `Company Name` 위 `Country` 드롭다운 입력 항목을 추가
+- 국가 목록은 `src/constants/countries.js`로 분리해 관리하고, `InquiryModal.jsx`의 필드 순서와 제출 payload에 `country` 값을 포함하도록 정리
+- `translations.js`에 `County` 라벨 번역을 추가하고 `index.css`에서 `select`가 기존 입력창과 같은 시각 스타일을 사용하도록 확장
+
+## 2026-03-02 00:06 - Business Inquiries 국가 입력창 커스텀 드롭다운 전환
+- `src/components/InquiryModal.jsx`에서 기본 `select`를 버튼 기반 커스텀 드롭다운으로 교체해 닫힌 상태에서 `Select Country` 문구와 아래쪽 화살표가 보이도록 수정
+- 펼쳐진 목록은 `src/index.css`에서 최대 높이 `300px`와 내부 스크롤이 적용되도록 스타일을 추가하고, 선택 후에도 기존 입력창과 같은 톤을 유지하도록 정리
+- 키보드 화살표 이동, Enter 선택, 바깥 영역 클릭 시 닫힘 동작까지 함께 반영한 뒤 `npm run build`로 빌드 확인
+
+## 2026-03-02 00:09 - Country 라벨 문구 및 드롭다운 간격 미세 조정
+- `src/i18n/translations.js`의 영어 라벨 문구를 `County`에서 `Country`로 바로잡아 표시 오타를 정리
+- `src/index.css`에서 드롭다운 열림 위치 간격을 줄여 입력창과 목록이 더 자연스럽게 이어지도록 조정
+- 모바일 구간에서는 드롭다운 최대 높이와 내부 패딩, 그림자를 별도로 조정해 작은 화면에서도 답답하지 않게 보이도록 다듬고 `npm run build`로 다시 확인
+
+## 2026-03-02 00:11 - Country 플레이스홀더 다국어 번역 적용
+- `src/i18n/translations.js`의 각 언어 `inquiryModal.fields`에 국가 선택 안내 문구를 별도 키로 추가
+- `src/components/InquiryModal.jsx`에서 `Select Country` 하드코딩을 제거하고 현재 언어 번역값을 표시하도록 연결
+- `npm run build`로 다국어 문구 분리 후에도 빌드가 정상 동작하는지 확인
+
+## 2026-03-02 00:14 - 필수값 오류 문구 다국어 번역 적용
+- `src/i18n/translations.js`에서 필수 입력 오류 문구를 스페인어, 프랑스어, 한국어에 맞게 각각 번역
+- 기존 검증 로직은 이미 번역 키를 참조하고 있어 추가 코드 변경 없이 각 언어 화면에 바로 반영되도록 정리
+- `npm run build`로 문구 변경 후에도 빌드가 정상인지 확인
+
+## 2026-03-02 00:15 - 이메일 형식 오류 문구 다국어 번역 적용
+- `src/i18n/translations.js`에서 이메일 형식 오류 문구를 스페인어, 프랑스어, 한국어에 맞게 각각 번역
+- 기존 이메일 검증 로직은 번역 키를 그대로 사용하고 있어 문자열 수정만으로 각 언어 화면에 반영되도록 정리
+- `npm run build`로 문구 변경 이후에도 빌드가 정상 동작하는지 확인
+
+## 2026-03-02 00:17 - 영어 기준 번역 문구 잔여 항목 정리
+- `src/i18n/translations.js`를 영어 기준으로 다시 점검해 비영어권에 남아 있던 영어성 표기를 정리
+- 스페인어와 프랑스어의 `Chatbot` 버튼 문구를 각 언어 표현으로 조정하고, 한국어 팝업 제목과 권리 표기 문구도 한국어로 통일
+- 한국어 판매 카운터의 `2025년 부터` 띄어쓰기까지 함께 바로잡은 뒤 `npm run build`로 확인
+
+## 2026-03-02 00:19 - county 내부 키를 country로 리팩터링
+- `src/components/InquiryModal.jsx`의 폼 상태, 필드 순서, 에러 키, 드롭다운 선택 처리, DOM 식별자에서 `county`를 `country`로 일괄 변경
+- `src/i18n/translations.js`의 필드 키와 플레이스홀더 키도 `country`, `countryPlaceholder`로 맞춰 코드 의미가 실제 국가 선택과 일치하도록 정리
+- 과거 작업 이력 문구까지 함께 보정하고 `npm run build`로 리팩터링 이후 동작을 확인
+
+## 2026-03-02 00:22 - country 필수 정책 및 Apps Script 저장 기준 정리
+- `src/components/InquiryModal.jsx`의 필수값 검증에 `country`를 추가해 프론트와 저장 정책이 서로 다르지 않도록 정리
+- `Docs/business_inquiries_apps_script_dopost_draft.md`, `Docs/business_inquiries_apps_script_dopost_token_draft.md`에서 시트 헤더, `appendRow()` 순서, `validatePayload()` 기준을 모두 `country` 포함 구조로 수정
+- `Docs/business_inquiries_google_sheets_checklist.md`, `Docs/business_inquiries_google_sheets_plan.md`, `Docs/business_inquiries_launch_checklist.md`에도 `Country` 필수 입력 정책과 테스트 기준을 반영하고 `npm run build`로 확인
+
+## 2026-03-02 00:25 - 실제 운영 시트 헤더 기준으로 Apps Script 문서 구체화
+- `Docs/business_inquiries_apps_script_dopost_draft.md`, `Docs/business_inquiries_apps_script_dopost_token_draft.md`의 예시 시트 헤더를 실제 운영 기준인 `Date | Time | Name | Job Title | County | Company Name | Email | Inquiry`로 구체화
+- 두 문서의 `appendRow()` 예시도 `submittedAt`을 날짜와 시간으로 나눠 저장하는 형태로 조정하고, 프론트 payload 키 `country`와 시트 헤더 `County`가 서로 다를 수 있다는 점을 설명
+- `Docs/business_inquiries_google_sheets_checklist.md`, `Docs/business_inquiries_google_sheets_plan.md`에도 같은 헤더 기준과 예시 행 구조를 반영
+
+## 2026-03-02 00:27 - Apps Script 날짜/시간 포맷을 한국 시간대로 명확히 고정
+- `Docs/business_inquiries_apps_script_dopost_draft.md`, `Docs/business_inquiries_apps_script_dopost_token_draft.md`의 코드 예시에 `SCRIPT_TIME_ZONE = 'Asia/Seoul'` 상수를 추가
+- `formatDateCell()`, `formatTimeCell()`가 더 이상 프로젝트 기본 시간대에 의존하지 않고 한국 시간대 기준 `yyyy-MM-dd`, `HH:mm:ss`로 저장되도록 문서 기준을 명확히 정리
+- 두 문서에 날짜/시간 저장 기준 설명과 Apps Script 프로젝트 시간대도 `Asia/Seoul`로 맞추는 권장 사항을 추가
+
+## 2026-03-02 00:29 - 운영 시트 헤더 Country 기준 재정리 및 submittedAt 예외 처리 보강
+- `Docs/business_inquiries_apps_script_dopost_draft.md`, `Docs/business_inquiries_apps_script_dopost_token_draft.md`, `Docs/business_inquiries_google_sheets_checklist.md`, `Docs/business_inquiries_google_sheets_plan.md`의 운영 시트 헤더 표기를 `Country` 기준으로 다시 통일
+- Apps Script 예시 코드에서 `new Date(payload.submittedAt)`를 직접 쓰지 않고 `parseSubmittedAt()` 헬퍼로 감싸 비어 있거나 잘못된 날짜 문자열이면 현재 시각으로 안전하게 대체하도록 보강
+- 날짜/시간 저장 예시와 체크 문구도 새 운영 시트 기준에 맞게 함께 정리
+
+## 2026-03-02 00:34 - Google Sheets 저장용 Apps Script 실제 코드 파일 추가
+- 저장소 안에 `apps-script/business-inquiry/Code.gs` 파일을 새로 추가해 Google Sheets 저장용 Apps Script 실행 코드를 실제 소스 형태로 정리
+- 이 파일에는 `Country` 필수 검증, 요청 토큰 검증, 한국 시간대 날짜/시간 분리 저장, `submittedAt` 예외 처리까지 반영
+- `api/business-inquiry.js`의 보조 메일 API도 `country` 필수 검증과 메일 본문 포함 기준으로 맞추고, Apps Script 초안 문서 두 곳에 실제 코드 파일 경로를 명시
+
+## 2026-03-02 00:38 - 실제 시트 탭 이름 Business Inquiries List로 최종 확정
+- 대장님이 알려주신 실제 구글 시트 탭 이름 `Business Inquiries List`를 기준으로 `apps-script/business-inquiry/Code.gs`의 `SHEET_NAME`을 최종 확정
+- `Docs/business_inquiries_apps_script_dopost_draft.md`, `Docs/business_inquiries_apps_script_dopost_token_draft.md` 안의 `SHEET_NAME` 예시와 시트 탭 이름 설명도 같은 값으로 통일
+
+## 2026-03-02 00:47 - 실제 Apps Script 웹앱 URL을 운영 환경 변수에 반영
+- 대장님이 전달한 Apps Script 웹앱 `/exec` URL을 기준으로 루트 `.env.production` 파일을 생성
+- `VITE_BUSINESS_INQUIRY_API_URL`에 실제 배포 URL을 넣고 `VITE_BUSINESS_INQUIRY_REQUEST_TOKEN`도 함께 반영해 운영 빌드가 바로 Apps Script를 호출하도록 정리
+- `npm run build`로 운영 환경 변수 반영 후에도 프론트 빌드가 정상 동작하는지 확인
+
+## 2026-03-02 00:54 - 로컬 개발 서버용 Apps Script 환경 변수 반영
+- `npm run dev`에서는 `.env.production`이 아니라 개발용 환경 파일이 필요하므로 루트 `.env.local` 파일을 새로 생성
+- `.env.local`에 실제 Apps Script `/exec` URL과 요청 토큰을 넣어 로컬 개발 화면에서도 Google Sheets 저장 API를 바로 호출할 수 있게 정리
+- Vite 개발 서버를 다시 시작해 `http://127.0.0.1:5173/`에서 새 환경 변수가 반영되도록 맞춤
+
+## 2026-03-02 00:59 - Business Inquiries 저장 결과 메시지 영역 높이 고정
+- `src/components/InquiryModal.jsx`에서 저장 결과 메시지 요소를 항상 렌더링하도록 바꿔 성공/실패 문구가 나오기 전에도 자리 높이가 유지되게 수정
+- `src/index.css`에서 메시지 영역 높이를 `24px`로 고정하고 폰트를 `14px Pretendard` 기준으로 정리
+- 메시지가 없을 때는 투명 텍스트로 공간만 유지하도록 처리한 뒤 `npm run build`로 확인
+
+## 2026-03-02 01:01 - 저장 결과 메시지와 버튼 영역 간격 8px 조정
+- `src/index.css`에서 저장 결과 메시지 하단 여백을 `8px`로 조정
+- 버튼 영역의 상단 간격도 함께 줄여 메시지와 다른 오브젝트 사이 실제 간격이 `8px` 기준으로 보이도록 정리
+- `npm run build`로 스타일 조정 후 빌드가 정상인지 확인
+
+## 2026-03-02 01:04 - Business Inquiries 입력창 배경색 흰색으로 통일
+- `src/index.css`의 입력 공통 스타일에서 팝업 입력창, 국가 선택창, 문의 내용 입력창 배경색을 `#ffffff`로 변경
+- 드롭다운 펼침 목록 패널은 별도 요소라 그대로 두고, 입력 본체만 흰색으로 맞춤
+- `npm run build`로 스타일 변경 후 빌드가 정상인지 확인
+
+## 2026-03-02 01:07 - 흰 배경 기준 입력창 테두리와 placeholder 대비 보강
+- `src/index.css`에서 입력창 기본 테두리를 옅은 회색으로 보이게 조정해 흰 배경 위에서도 윤곽이 흐려지지 않도록 정리
+- 일반 입력창과 문의 내용 입력창의 placeholder 색, 국가 선택창 placeholder 색을 실제 입력값과 구분되도록 같은 톤으로 맞춤
+- `npm run build`로 스타일 보정 후 빌드가 정상인지 확인
+
+## 2026-03-02 01:09 - 팝업 하단 버튼 영역 위치 16px 상향 조정
+- `src/index.css`의 `inquiry-modal-actions` 상단 여백을 조정해 하단 버튼 그룹이 기존보다 위로 `16px` 올라오도록 수정
+- `npm run build`로 버튼 위치 조정 후 빌드가 정상인지 확인
+
+## 2026-03-02 01:11 - 저장 결과 메시지 텍스트 위치만 8px 하향 조정
+- `src/index.css`의 저장 결과 메시지 요소에 시각적 하향 오프셋을 적용해 메시지 텍스트만 아래로 `8px` 내려오도록 수정
+- 버튼 그룹 레이아웃 간격은 건드리지 않아 버튼 위치는 그대로 유지되도록 정리
+- `npm run build`로 스타일 조정 후 빌드가 정상인지 확인
+
 ## 2026-03-01 22:52 - Vercel 환경 변수 설정 방법 설명
 - Vercel에 메일 전송에 필요한 '비밀 열쇠(API Key)'와 '연락처(Email)'를 등록하는 과정을 대장님이 이해하기 쉽게 비유를 들어 설명함
 

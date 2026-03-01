@@ -215,11 +215,12 @@ body {
 }
 
 .inquiry-field-input,
+.inquiry-field-select,
 .inquiry-field-textarea {
   width: 100%;
-  border: 1px solid transparent;
+  border: 1px solid rgba(87, 93, 100, 0.12);
   border-radius: 12px;
-  background: #eceff1;
+  background: #ffffff;
   color: #575d64;
   font-family: 'Pretendard', sans-serif;
   font-size: 21.333px;
@@ -233,6 +234,17 @@ body {
   padding: 12px 12px;
 }
 
+.inquiry-field-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  padding: 12px 12px;
+  appearance: none;
+  text-align: left;
+  cursor: pointer;
+}
+
 .inquiry-field-textarea {
   min-height: 220px;
   resize: none;
@@ -240,14 +252,109 @@ body {
 }
 
 .inquiry-field-input:focus,
+.inquiry-field-select:focus,
 .inquiry-field-textarea:focus {
-  border-color: rgba(87, 93, 100, 0.28);
+  border-color: rgba(87, 93, 100, 0.32);
   box-shadow: 0 0 0 3px rgba(87, 93, 100, 0.08);
 }
 
+.inquiry-field-input::placeholder,
+.inquiry-field-textarea::placeholder {
+  color: #98a0a8;
+}
+
 .inquiry-field-input.is-error,
+.inquiry-field-select.is-error,
 .inquiry-field-textarea.is-error {
   border-color: rgba(255, 68, 79, 0.42);
+}
+
+.inquiry-field-select-wrap {
+  position: relative;
+}
+
+.inquiry-field-select-value {
+  overflow: hidden;
+  color: #575d64;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inquiry-field-select-value.is-placeholder {
+  color: #98a0a8;
+}
+
+.inquiry-field-select-icon {
+  flex-shrink: 0;
+  width: 0;
+  height: 0;
+  margin-left: 12px;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 7px solid #7d858d;
+  transition: transform 160ms ease;
+}
+
+.inquiry-field-select-icon.is-open {
+  transform: rotate(180deg);
+}
+
+.inquiry-field-select-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: 300px;
+  margin: 0;
+  padding: 8px 0;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid rgba(87, 93, 100, 0.16);
+  border-radius: 12px;
+  background: rgba(249, 249, 248, 0.98);
+  box-shadow: 0 24px 48px rgba(77, 84, 90, 0.18);
+  transform-origin: top center;
+}
+
+.inquiry-field-select-dropdown::-webkit-scrollbar {
+  width: 10px;
+}
+
+.inquiry-field-select-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.inquiry-field-select-dropdown::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(125, 133, 141, 0.55);
+  background-clip: padding-box;
+}
+
+.inquiry-field-select-option {
+  width: 100%;
+  padding: 12px 16px;
+  border: 0;
+  background: transparent;
+  color: #575d64;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 21.333px;
+  font-weight: 400;
+  line-height: 1.2;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease;
+}
+
+.inquiry-field-select-option:hover,
+.inquiry-field-select-option:focus-visible {
+  outline: none;
+  background: rgba(87, 93, 100, 0.08);
+}
+
+.inquiry-field-select-option.is-selected {
+  background: rgba(91, 97, 104, 0.12);
 }
 
 .inquiry-modal-actions {
@@ -255,17 +362,19 @@ body {
   flex-wrap: wrap;
   justify-content: center;
   gap: 56px;
-  margin-top: 44px;
+  margin-top: -8px;
 }
 
 .inquiry-submit-message {
   width: 100%;
-  margin: 0 0 4px;
+  min-height: 24px;
+  margin: 0 0 8px;
   font-family: 'Pretendard', sans-serif;
   font-size: 14px;
   font-weight: 400;
-  line-height: 1.4;
+  line-height: 24px;
   text-align: center;
+  transform: translateY(8px);
 }
 
 .inquiry-submit-message.is-success {
@@ -274,6 +383,10 @@ body {
 
 .inquiry-submit-message.is-error {
   color: #ff444f;
+}
+
+.inquiry-submit-message.is-idle {
+  color: transparent;
 }
 
 .inquiry-action-button {
@@ -459,7 +572,9 @@ body {
   }
 
   .inquiry-field-input,
-  .inquiry-field-textarea {
+  .inquiry-field-select,
+  .inquiry-field-textarea,
+  .inquiry-field-select-option {
     font-size: 21px;
   }
 
@@ -501,10 +616,27 @@ body {
     font-size: 14px;
   }
 
-  .inquiry-field-input {
+  .inquiry-field-input,
+  .inquiry-field-select {
     min-height: 56px;
     padding: 14px 16px;
     font-size: 18px;
+  }
+
+  .inquiry-field-select-option {
+    font-size: 18px;
+  }
+
+  .inquiry-field-select-dropdown {
+    top: calc(100% + 4px);
+    max-height: min(300px, 42vh);
+    padding: 6px 0;
+    border-radius: 10px;
+    box-shadow: 0 16px 28px rgba(77, 84, 90, 0.14);
+  }
+
+  .inquiry-field-select-option {
+    padding: 11px 14px;
   }
 
   .inquiry-field-textarea {

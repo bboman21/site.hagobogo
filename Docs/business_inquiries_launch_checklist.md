@@ -161,6 +161,7 @@ https://your-project-name.vercel.app/api/business-inquiry
 2. 아래 값을 입력합니다.
    - Name
    - Job Title
+   - Country
    - Company Name
    - Email
    - Inquiry

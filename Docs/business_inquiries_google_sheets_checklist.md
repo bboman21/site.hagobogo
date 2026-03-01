@@ -34,10 +34,26 @@
 첫 줄에 아래 헤더를 넣는 것을 권장합니다.
 
 ```text
-Submitted At | Language | Name | Job Title | Company Name | Email | Inquiry
+Date | Time | Name | Job Title | Country | Company Name | Email | Inquiry
 ```
 
 이렇게 하면 나중에 데이터가 아래 행부터 계속 쌓입니다.
+
+참고:
+
+- 프론트에서는 `country` 키로 값을 보냅니다.
+- 실제 운영 시트 열 제목도 `Country`로 통일합니다.
+- 즉, 코드 키와 시트 헤더가 같은 의미로 정리된 상태입니다.
+
+### 3-3. `Country` 필드는 필수로 본다
+
+이 체크리스트 기준에서는 `Country`를 선택값이 아니라 필수값으로 보는 것을 권장합니다.
+
+이유:
+
+- 어느 국가에서 들어온 문의인지 알아야 담당자 배정이 쉬워집니다.
+- 언어와 시차 대응 기준을 잡는 데 도움이 됩니다.
+- B2B 문의에서 국가 정보가 없으면 후속 연락 품질이 떨어질 수 있습니다.
 
 ## 4. Apps Script 프로젝트 만들기
 
@@ -141,7 +157,7 @@ VITE_BUSINESS_INQUIRY_API_URL=https://script.google.com/macros/s/XXXXXXXXXXXX/ex
 3. 웹앱 URL을 프론트 빌드 값에 넣고 다시 빌드합니다.
 4. GitHub Pages에 최신 `dist`를 반영합니다.
 5. 사이트에서 `Business Inquiries` 팝업을 엽니다.
-6. 테스트 데이터를 입력하고 `Save`를 누릅니다.
+6. 테스트 데이터를 입력하고 `Country`도 선택한 뒤 `Save`를 누릅니다.
 7. 성공 메시지가 뜨는지 확인합니다.
 8. Google Sheets에 새 행이 추가됐는지 확인합니다.
 

@@ -53,6 +53,10 @@ function validatePayload(payload) {
         return { code: 'REQUIRED_NAME', message: '이름은 필수입니다.' };
     }
 
+    if (!payload.country?.trim()) {
+        return { code: 'REQUIRED_COUNTRY', message: '국가는 필수입니다.' };
+    }
+
     if (!payload.companyName?.trim()) {
         return { code: 'REQUIRED_COMPANY_NAME', message: '회사명은 필수입니다.' };
     }
@@ -80,14 +84,16 @@ function createSubject(companyName) {
     return `[HAGOBOGO] New Business Inquiry from ${companyName}`;
 }
 
-function createTextBody({ name, title, companyName, email, inquiry, language, submittedAt }) {
+function createTextBody({ name, title, country, companyName, email, inquiry, language, submittedAt }) {
     const safeJobTitle = title?.trim() || '-';
+    const safeCountry = country?.trim() || '-';
     const safeLanguage = language?.trim() || 'EN';
     const safeSubmittedAt = submittedAt?.trim() || new Date().toISOString();
 
     return [
         `Name: ${name.trim()}`,
         `Job Title: ${safeJobTitle}`,
+        `Country: ${safeCountry}`,
         `Company Name: ${companyName.trim()}`,
         `Email: ${email.trim()}`,
         `Language: ${safeLanguage}`,
@@ -99,9 +105,10 @@ function createTextBody({ name, title, companyName, email, inquiry, language, su
 }
 
 async function sendInquiryMail(payload) {
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const toEmail = process.env.BUSINESS_INQUIRY_TO_EMAIL || FALLBACK_TO_EMAIL;
-    const fromEmail = process.env.BUSINESS_INQUIRY_FROM_EMAIL || FALLBACK_FROM_EMAIL;
+    const env = globalThis.process?.env ?? {};
+    const resendApiKey = env.RESEND_API_KEY;
+    const toEmail = env.BUSINESS_INQUIRY_TO_EMAIL || FALLBACK_TO_EMAIL;
+    const fromEmail = env.BUSINESS_INQUIRY_FROM_EMAIL || FALLBACK_FROM_EMAIL;
 
     if (!resendApiKey) {
         return {

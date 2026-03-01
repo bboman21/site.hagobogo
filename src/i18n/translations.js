@@ -18,6 +18,8 @@ export const TRANSLATIONS = {
             fields: {
                 name: 'Name',
                 title: 'Job Title',
+                country: 'Country',
+                countryPlaceholder: 'Select Country',
                 companyName: 'Company Name',
                 email: 'Email',
                 inquiry: 'Inquiry',
@@ -58,13 +60,15 @@ export const TRANSLATIONS = {
         },
         ctas: {
             businessInquiries: 'Consultas Comerciales',
-            chatbot: 'Chatbot',
+            chatbot: 'Asistente Virtual',
         },
         inquiryModal: {
             title: 'Consultas Comerciales',
             fields: {
                 name: 'Nombre',
                 title: 'Cargo',
+                country: 'País',
+                countryPlaceholder: 'Seleccione un país',
                 companyName: 'Nombre de la Empresa',
                 email: 'Correo Electrónico',
                 inquiry: 'Consulta',
@@ -75,8 +79,8 @@ export const TRANSLATIONS = {
                 saving: 'Guardando...',
             },
             errors: {
-                required: 'Required field',
-                invalidEmail: 'Not an email format',
+                required: 'Campo obligatorio',
+                invalidEmail: 'Formato de correo no válido',
             },
             submit: {
                 success: 'Su consulta se ha enviado correctamente.',
@@ -105,13 +109,15 @@ export const TRANSLATIONS = {
         },
         ctas: {
             businessInquiries: 'Demandes Commerciales',
-            chatbot: 'Chatbot',
+            chatbot: 'Assistant Virtuel',
         },
         inquiryModal: {
             title: 'Demandes Commerciales',
             fields: {
                 name: 'Nom',
                 title: 'Intitulé du Poste',
+                country: 'Pays',
+                countryPlaceholder: 'Sélectionnez un pays',
                 companyName: "Nom de l'Entreprise",
                 email: 'E-mail',
                 inquiry: 'Demande',
@@ -122,8 +128,8 @@ export const TRANSLATIONS = {
                 saving: 'Enregistrement...',
             },
             errors: {
-                required: 'Required field',
-                invalidEmail: 'Not an email format',
+                required: 'Champ requis',
+                invalidEmail: "Format d'e-mail invalide",
             },
             submit: {
                 success: 'Votre demande a bien été envoyée.',
@@ -148,17 +154,19 @@ export const TRANSLATIONS = {
         salesCounter: {
             titleEmphasis: 'HAGOBOGO',
             titleText: '누적 판매량',
-            sinceText: '2025년 부터',
+            sinceText: '2025년부터',
         },
         ctas: {
             businessInquiries: '비즈니스 문의',
             chatbot: '챗봇',
         },
         inquiryModal: {
-            title: 'Business Inquiries',
+            title: '비즈니스 문의',
             fields: {
                 name: '이름',
                 title: '직함',
+                country: '국가',
+                countryPlaceholder: '국가를 선택하세요',
                 companyName: '회사명',
                 email: '이메일',
                 inquiry: '문의 내용',
@@ -169,8 +177,8 @@ export const TRANSLATIONS = {
                 saving: '전송 중...',
             },
             errors: {
-                required: 'Required field',
-                invalidEmail: 'Not an email format',
+                required: '필수 입력 항목입니다.',
+                invalidEmail: '이메일 형식이 올바르지 않습니다.',
             },
             submit: {
                 success: '문의가 정상적으로 접수되었습니다.',
@@ -183,7 +191,7 @@ export const TRANSLATIONS = {
             "글로벌 확장: 국내 성공을 기반으로 'HAGOBOGO'는 해외 사용자를 위한 전용 글로벌 앱을 출시하며 모바일 기반 생식 건강 모니터링 솔루션으로서 입지를 넓히고 있습니다.",
         ],
         footer: [
-            'ⓒ 2026 INTIN Inc. All rights reserved.',
+            'ⓒ 2026 INTIN Inc. 모든 권리 보유.',
             '회사명 대표자 : (주)인트인 대표 김지훈',
             '소재지 : 대구광역시 동구 첨복로 52',
             '사업자 등록번호 : 108-81-90649 | 통신판매신고번호 : 제2018-대구동구-0025호',
