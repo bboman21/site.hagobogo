@@ -1,14 +1,10 @@
 function getInquiryApiUrl() {
-    return import.meta.env.VITE_BUSINESS_INQUIRY_API_URL?.trim() || '';
-}
-
-function getInquiryRequestToken() {
-    return import.meta.env.VITE_BUSINESS_INQUIRY_REQUEST_TOKEN?.trim() || '';
+    const value = import.meta.env.VITE_BUSINESS_INQUIRY_API_URL?.trim() || '';
+    return value.startsWith('REPLACE_WITH_') ? '' : value;
 }
 
 export async function submitBusinessInquiry(payload) {
     const inquiryApiUrl = getInquiryApiUrl();
-    const requestToken = getInquiryRequestToken();
 
     if (!inquiryApiUrl) {
         const error = new Error('문의 저장용 Apps Script URL이 설정되지 않았습니다.');
@@ -16,28 +12,35 @@ export async function submitBusinessInquiry(payload) {
         throw error;
     }
 
-    if (!requestToken) {
-        const error = new Error('문의 저장용 요청 토큰이 설정되지 않았습니다.');
-        error.code = 'MISSING_REQUEST_TOKEN';
-        throw error;
+    let response;
+
+    try {
+        response = await fetch(inquiryApiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain;charset=utf-8',
+            },
+            body: JSON.stringify(payload),
+        });
+    } catch (error) {
+        const networkError = new Error('문의 전송 중 네트워크 오류가 발생했습니다.');
+        networkError.code = 'NETWORK_ERROR';
+        networkError.cause = error;
+        throw networkError;
     }
 
-    const response = await fetch(inquiryApiUrl, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'text/plain;charset=utf-8',
-        },
-        body: JSON.stringify({
-            ...payload,
-            requestToken,
-        }),
-    });
+    const responseText = await response.text();
+    let data;
 
-    const data = await response.json().catch(() => ({
-        ok: false,
-        code: 'UNKNOWN_RESPONSE',
-        message: '알 수 없는 응답입니다.',
-    }));
+    try {
+        data = JSON.parse(responseText);
+    } catch {
+        data = {
+            ok: false,
+            code: 'UNKNOWN_RESPONSE',
+            message: 'Apps Script가 JSON 형식이 아닌 응답을 반환했습니다.',
+        };
+    }
 
     if (!response.ok || !data.ok) {
         const error = new Error(data.message || '문의 전송에 실패했습니다.');

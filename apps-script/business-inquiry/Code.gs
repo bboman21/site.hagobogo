@@ -1,6 +1,5 @@
 const SHEET_NAME = 'Business Inquiries List';
 const MAX_INQUIRY_LENGTH = 3000;
-const EXPECTED_REQUEST_TOKEN = 'HGBG_INQUIRY_2026_x7Lq2mP9vK4sN8aT';
 const SCRIPT_TIME_ZONE = 'Asia/Seoul';
 
 function doGet() {
@@ -74,14 +73,6 @@ function validatePayload(payload) {
       ok: false,
       code: 'INVALID_PAYLOAD',
       message: '잘못된 요청 형식입니다.'
-    };
-  }
-
-  if (!payload.requestToken || payload.requestToken !== EXPECTED_REQUEST_TOKEN) {
-    return {
-      ok: false,
-      code: 'INVALID_REQUEST_TOKEN',
-      message: '유효하지 않은 요청입니다.'
     };
   }
 

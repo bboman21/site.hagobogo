@@ -36,6 +36,10 @@ export const TRANSLATIONS = {
             submit: {
                 success: 'Your inquiry has been submitted successfully.',
                 failure: 'Failed to send inquiry. Please try again later.',
+                missingApiUrl: 'The Apps Script URL is not configured.',
+                sheetNotFound: 'The target Google Sheets tab could not be found.',
+                networkFailure: 'A network error occurred while sending the inquiry.',
+                invalidResponse: 'Apps Script returned an invalid response.',
             },
         },
         ticker: [
@@ -85,6 +89,10 @@ export const TRANSLATIONS = {
             submit: {
                 success: 'Su consulta se ha enviado correctamente.',
                 failure: 'No se pudo enviar la consulta. Inténtelo de nuevo más tarde.',
+                missingApiUrl: 'La URL de Apps Script no está configurada.',
+                sheetNotFound: 'No se encontró la pestaña objetivo de Google Sheets.',
+                networkFailure: 'Se produjo un error de red al enviar la consulta.',
+                invalidResponse: 'Apps Script devolvió una respuesta no válida.',
             },
         },
         ticker: [
@@ -134,6 +142,10 @@ export const TRANSLATIONS = {
             submit: {
                 success: 'Votre demande a bien été envoyée.',
                 failure: 'Échec de l’envoi de la demande. Veuillez réessayer plus tard.',
+                missingApiUrl: "L'URL Apps Script n'est pas configurée.",
+                sheetNotFound: "L'onglet Google Sheets cible est introuvable.",
+                networkFailure: "Une erreur réseau s'est produite lors de l'envoi de la demande.",
+                invalidResponse: "Apps Script a renvoyé une réponse non valide.",
             },
         },
         ticker: [
@@ -183,6 +195,10 @@ export const TRANSLATIONS = {
             submit: {
                 success: '문의가 정상적으로 접수되었습니다.',
                 failure: '문의 전송에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+                missingApiUrl: 'Apps Script 저장 URL이 설정되지 않았습니다.',
+                sheetNotFound: 'Google Sheets 대상 시트 탭을 찾지 못했습니다.',
+                networkFailure: '문의 전송 중 네트워크 오류가 발생했습니다.',
+                invalidResponse: 'Apps Script가 올바른 JSON 응답을 반환하지 않았습니다.',
             },
         },
         ticker: [

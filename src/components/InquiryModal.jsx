@@ -15,6 +15,21 @@ const INITIAL_FORM_VALUES = {
 
 const FIELD_ORDER = ['name', 'title', 'country', 'companyName', 'email', 'inquiry'];
 
+function getSubmitErrorMessage(copy, error) {
+    if (!error || typeof error !== 'object') {
+        return copy.submit.failure;
+    }
+
+    const errorMessages = {
+        MISSING_INQUIRY_API_URL: copy.submit.missingApiUrl,
+        SHEET_NOT_FOUND: copy.submit.sheetNotFound,
+        NETWORK_ERROR: copy.submit.networkFailure,
+        UNKNOWN_RESPONSE: copy.submit.invalidResponse,
+    };
+
+    return errorMessages[error.code] || error.message || copy.submit.failure;
+}
+
 export default function InquiryModal({ copy, language, onClose }) {
     const [formValues, setFormValues] = useState(INITIAL_FORM_VALUES);
     const [formErrors, setFormErrors] = useState({});
@@ -309,12 +324,7 @@ export default function InquiryModal({ copy, language, onClose }) {
         } catch (error) {
             setSubmitState({
                 type: 'error',
-                message:
-                    error.code === 'MISSING_INQUIRY_API_URL'
-                        ? 'Apps Script 저장 URL이 설정되지 않았습니다.'
-                        : error.code === 'MISSING_REQUEST_TOKEN'
-                            ? '요청 토큰이 설정되지 않았습니다.'
-                            : copy.submit.failure,
+                message: getSubmitErrorMessage(copy, error),
             });
             console.error('Business inquiry submit failed', error);
         } finally {
