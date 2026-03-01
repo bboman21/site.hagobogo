@@ -330,3 +330,36 @@
 ## 2026-03-01 22:40 - 메일 전송 한 장 체크리스트 작성
 - `Docs/business_inquiries_launch_checklist.md` 문서를 추가해 Vercel 클릭 순서, 환경 변수 최종값, Resend 도메인 인증 순서, 운영 테스트 절차를 한 장짜리로 정리
 - 초보자 기준으로 `Add New... > Project`, `Import`, `Settings > Environment Variables` 등 실제 Vercel 웹 화면에서 눌러야 할 흐름을 포함해 설명
+
+## 2026-03-01 23:13 - Google Sheets 저장 구조 설계 전환
+- `Business Inquiries` 내용을 메일 대신 Google Sheets에 저장하는 방향이 가능한지 공식 Google Apps Script 문서를 기준으로 검토
+- `Docs/business_inquiries_google_sheets_plan.md`에 `GitHub Pages -> Apps Script 웹앱 -> Google Sheets` 구조와 `appendRow()` 기반 저장 방식을 설계 문서로 정리
+- `Docs/business_inquiries_google_sheets_checklist.md`에 Google Sheets 생성, `확장 프로그램 > Apps Script`, `배포 > 새 배포 > 웹 앱` 클릭 순서, `/exec` URL 사용, 운영 테스트 절차를 한 장짜리 체크리스트로 정리
+
+## 2026-03-01 23:16 - Google Sheets 저장 방식 구현 작업안 작성
+- `Docs/business_inquiries_google_sheets_implementation_plan.md` 문서를 추가해 현재 메일 전송 구조를 Google Sheets 저장 구조로 전환할 때의 실제 코드 작업 순서를 정리
+- `InquiryModal.jsx`, `inquiryApi.js`, `.env.production.example`, `api/business-inquiry.js`, `vercel.json`이 각각 유지/수정/보류 중 어디에 해당하는지 파일별 역할 기준으로 정리
+- 바로 삭제보다 우선 전환 후 안정화, 그 다음 정리라는 원칙을 문서에 명시해 롤백 가능성을 남기도록 구조화
+
+## 2026-03-01 23:20 - Apps Script doPost 초안 문서 작성
+- `Docs/business_inquiries_apps_script_dopost_draft.md` 문서를 추가해 Google Apps Script `Code.gs`에 붙여 넣을 수 있는 `doPost(e)` 기준 초안 코드를 작성
+- `SHEET_NAME`, `appendRow()` 열 순서, `doGet()` 건강 체크, 필수값 검증, 배포 전 체크리스트와 테스트 방법까지 함께 정리
+
+## 2026-03-01 23:22 - Apps Script 토큰 검증 2차 초안 문서 작성
+- `Docs/business_inquiries_apps_script_dopost_token_draft.md` 문서를 추가해 `requestToken` 기반의 간단한 요청 검증을 포함한 `doPost(e)` 2차 초안 코드를 작성
+- `EXPECTED_REQUEST_TOKEN`, 프론트가 같이 보내야 하는 `requestToken`, 이 방식의 한계와 테스트 방법까지 함께 정리
+
+## 2026-03-01 23:25 - 프론트 requestToken 전송 코드 반영
+- `src/lib/inquiryApi.js`에서 `VITE_BUSINESS_INQUIRY_REQUEST_TOKEN` 환경 변수를 읽어 `requestToken`을 요청 본문에 자동 포함하도록 수정
+- 요청 토큰이 비어 있으면 전송 전에 `MISSING_REQUEST_TOKEN` 오류를 발생시키도록 보강
+- `.env.example`, `.env.production.example`에 `VITE_BUSINESS_INQUIRY_REQUEST_TOKEN` 예시 값을 추가하고 `InquiryModal.jsx`에서 해당 오류를 사용자 메시지로 구분해 표시하도록 정리
+
+## 2026-03-01 22:52 - Vercel 환경 변수 설정 방법 설명
+- Vercel에 메일 전송에 필요한 '비밀 열쇠(API Key)'와 '연락처(Email)'를 등록하는 과정을 대장님이 이해하기 쉽게 비유를 들어 설명함
+
+## 2026-03-01 22:54 - 대장님 환경 변수 입력 확인
+- 대장님이 보내주신 Vercel 환경 변수 입력 화면 스크린샷을 확인하고, 올바른 입력 방식임을 피드백함
+- 나머지 필요한 환경 변수(`BUSINESS_INQUIRY_TO_EMAIL`, `BUSINESS_INQUIRY_FROM_EMAIL`)에 대해서도 추가 안내함
+
+## 2026-03-01 22:58 - Resend 도메인 인증 개념 설명
+- '인증된 도메인 기반 주소'라는 어려운 표현을 '공인된 신분증' 비유를 들어 대장님이 이해하기 쉽게 설명함

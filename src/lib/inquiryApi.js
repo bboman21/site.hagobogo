@@ -10,13 +10,28 @@ function getInquiryApiUrl() {
     return DEFAULT_INQUIRY_API_URL;
 }
 
+function getInquiryRequestToken() {
+    return import.meta.env.VITE_BUSINESS_INQUIRY_REQUEST_TOKEN?.trim() || '';
+}
+
 export async function submitBusinessInquiry(payload) {
+    const requestToken = getInquiryRequestToken();
+
+    if (!requestToken) {
+        const error = new Error('문의 저장용 요청 토큰이 설정되지 않았습니다.');
+        error.code = 'MISSING_REQUEST_TOKEN';
+        throw error;
+    }
+
     const response = await fetch(getInquiryApiUrl(), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+            ...payload,
+            requestToken,
+        }),
     });
 
     const data = await response.json().catch(() => ({

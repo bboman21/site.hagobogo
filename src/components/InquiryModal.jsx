@@ -145,7 +145,9 @@ export default function InquiryModal({ copy, language, onClose }) {
         } catch (error) {
             setSubmitState({
                 type: 'error',
-                message: copy.submit.failure,
+                message: error.code === 'MISSING_REQUEST_TOKEN'
+                    ? '요청 토큰이 설정되지 않았습니다.'
+                    : copy.submit.failure,
             });
             console.error('Business inquiry submit failed', error);
         } finally {
