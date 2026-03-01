@@ -165,6 +165,7 @@ export default function Dashboard() {
             {isInquiryModalOpen && (
                 <InquiryModal
                     copy={copy.inquiryModal}
+                    language={language}
                     onClose={handleCloseInquiryModal}
                 />
             )}

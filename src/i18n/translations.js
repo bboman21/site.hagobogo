@@ -25,10 +25,15 @@ export const TRANSLATIONS = {
             buttons: {
                 cancel: 'Cancel',
                 save: 'Save',
+                saving: 'Saving...',
             },
             errors: {
                 required: 'Required field',
                 invalidEmail: 'Not an email format',
+            },
+            submit: {
+                success: 'Your inquiry has been submitted successfully.',
+                failure: 'Failed to send inquiry. Please try again later.',
             },
         },
         ticker: [
@@ -67,10 +72,15 @@ export const TRANSLATIONS = {
             buttons: {
                 cancel: 'Cancelar',
                 save: 'Guardar',
+                saving: 'Guardando...',
             },
             errors: {
                 required: 'Required field',
                 invalidEmail: 'Not an email format',
+            },
+            submit: {
+                success: 'Su consulta se ha enviado correctamente.',
+                failure: 'No se pudo enviar la consulta. Inténtelo de nuevo más tarde.',
             },
         },
         ticker: [
@@ -109,10 +119,15 @@ export const TRANSLATIONS = {
             buttons: {
                 cancel: 'Annuler',
                 save: 'Enregistrer',
+                saving: 'Enregistrement...',
             },
             errors: {
                 required: 'Required field',
                 invalidEmail: 'Not an email format',
+            },
+            submit: {
+                success: 'Votre demande a bien été envoyée.',
+                failure: 'Échec de l’envoi de la demande. Veuillez réessayer plus tard.',
             },
         },
         ticker: [
@@ -151,10 +166,15 @@ export const TRANSLATIONS = {
             buttons: {
                 cancel: '취소',
                 save: '저장',
+                saving: '전송 중...',
             },
             errors: {
                 required: 'Required field',
                 invalidEmail: 'Not an email format',
+            },
+            submit: {
+                success: '문의가 정상적으로 접수되었습니다.',
+                failure: '문의 전송에 실패했습니다. 잠시 후 다시 시도해 주세요.',
             },
         },
         ticker: [

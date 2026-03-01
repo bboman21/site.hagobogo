@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { submitBusinessInquiry } from '../lib/inquiryApi';
 
 const MAX_INQUIRY_LENGTH = 3000;
 
@@ -12,11 +13,14 @@ const INITIAL_FORM_VALUES = {
 
 const FIELD_ORDER = ['name', 'title', 'companyName', 'email', 'inquiry'];
 
-export default function InquiryModal({ copy, onClose }) {
+export default function InquiryModal({ copy, language, onClose }) {
     const [formValues, setFormValues] = useState(INITIAL_FORM_VALUES);
     const [formErrors, setFormErrors] = useState({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitState, setSubmitState] = useState(null);
     const firstInputRef = useRef(null);
     const fieldRefs = useRef({});
+    const closeTimeoutRef = useRef(null);
 
     const inquiryLength = formValues.inquiry.length;
     const inquiryCountLabel = useMemo(
@@ -31,6 +35,9 @@ export default function InquiryModal({ copy, onClose }) {
 
         return () => {
             document.body.style.overflow = previousOverflow;
+            if (closeTimeoutRef.current) {
+                clearTimeout(closeTimeoutRef.current);
+            }
         };
     }, []);
 
@@ -55,6 +62,7 @@ export default function InquiryModal({ copy, onClose }) {
             ...prev,
             [name]: value,
         }));
+        setSubmitState(null);
 
         setFormErrors(prev => {
             if (!prev[name]) {
@@ -104,18 +112,44 @@ export default function InquiryModal({ copy, onClose }) {
         return nextErrors;
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
         const nextErrors = validateForm();
         setFormErrors(nextErrors);
+        setSubmitState(null);
 
         if (Object.keys(nextErrors).length > 0) {
             return;
         }
 
-        console.info('Business inquiry saved', formValues);
-        onClose();
+        setIsSubmitting(true);
+
+        try {
+            await submitBusinessInquiry({
+                ...formValues,
+                language,
+            });
+
+            setSubmitState({
+                type: 'success',
+                message: copy.submit.success,
+            });
+
+            setFormValues(INITIAL_FORM_VALUES);
+            setFormErrors({});
+            closeTimeoutRef.current = setTimeout(() => {
+                onClose();
+            }, 1400);
+        } catch (error) {
+            setSubmitState({
+                type: 'error',
+                message: copy.submit.failure,
+            });
+            console.error('Business inquiry submit failed', error);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -232,11 +266,19 @@ export default function InquiryModal({ copy, onClose }) {
                     </div>
 
                     <div className="inquiry-modal-actions">
-                        <button type="button" className="inquiry-action-button is-cancel" onClick={onClose}>
+                        {submitState && (
+                            <p
+                                className={`inquiry-submit-message ${submitState.type === 'success' ? 'is-success' : 'is-error'}`}
+                                aria-live="polite"
+                            >
+                                {submitState.message}
+                            </p>
+                        )}
+                        <button type="button" className="inquiry-action-button is-cancel" onClick={onClose} disabled={isSubmitting}>
                             {copy.buttons.cancel}
                         </button>
-                        <button type="submit" className="inquiry-action-button is-save">
-                            {copy.buttons.save}
+                        <button type="submit" className="inquiry-action-button is-save" disabled={isSubmitting}>
+                            {isSubmitting ? copy.buttons.saving : copy.buttons.save}
                         </button>
                     </div>
                 </form>

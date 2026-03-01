@@ -252,9 +252,28 @@ body {
 
 .inquiry-modal-actions {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 56px;
   margin-top: 44px;
+}
+
+.inquiry-submit-message {
+  width: 100%;
+  margin: 0 0 4px;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.inquiry-submit-message.is-success {
+  color: #4d545a;
+}
+
+.inquiry-submit-message.is-error {
+  color: #ff444f;
 }
 
 .inquiry-action-button {
@@ -275,6 +294,12 @@ body {
 .inquiry-action-button:focus-visible {
   outline: none;
   transform: translateY(-1px);
+}
+
+.inquiry-action-button:disabled {
+  cursor: wait;
+  opacity: 0.72;
+  transform: none;
 }
 
 .inquiry-action-button.is-cancel {

@@ -258,6 +258,22 @@
 - 일반 입력창에서 `Enter`를 누르면 아래 입력창으로 포커스가 이동하도록 필드 순서 기반 로직 추가
 - 마지막 `Inquiry` 입력창은 다음 필드가 없으므로 기존 위치를 유지하도록 구성
 
+## 2026-03-01 22:00 - Vercel + Resend 구현 구조도 문서 작성
+- `Business Inquiries` 메일 발송 기능을 `GitHub Pages + Vercel 서버리스 함수 + Resend` 조합으로 구현하는 구조도를 `Docs/business_inquiries_resend_vercel_plan.md`에 작성
+- 프론트엔드, 서버리스 API, Resend의 역할과 데이터 흐름을 실제 프로젝트 기준 파일 구조로 정리
+- 환경 변수, CORS, 1차 구현 범위와 2차 고도화 범위까지 포함해 운영 가능한 구조를 문서화
+
+## 2026-03-01 22:03 - Vercel 서버리스 1차 구현 계획서 작성
+- `Business Inquiries` 메일 발송 기능의 1차 구현 범위를 실제 파일 단위와 구현 순서 기준으로 세분화한 `Docs/business_inquiries_vercel_implementation_plan.md` 문서를 작성
+- `InquiryModal`, `inquiryApi`, `api/business-inquiry.js`, `translations.js`가 각각 어떤 책임을 가지는지 정리
+- Vercel 배포 준비 항목, 운영 테스트 체크리스트, 구현 중 자주 막히는 지점까지 포함해 바로 착수 가능한 계획서로 구체화
+
+## 2026-03-01 22:07 - Business Inquiries 메일 전송 1차 구현
+- `src/lib/inquiryApi.js`를 추가해 `Business Inquiries` 팝업이 서버리스 메일 API를 호출할 수 있는 프론트 전송 유틸을 분리
+- `api/business-inquiry.js`를 추가해 Vercel 서버리스 함수에서 입력값 검증 후 Resend HTTP API를 호출하는 메일 발송 구조를 구현
+- 수신 이메일은 `BUSINESS_INQUIRY_TO_EMAIL` 환경 변수가 없을 경우 `bboman21@gmail.com`을 기본값으로 사용하도록 구성
+- `InquiryModal.jsx`에 제출 중 상태, 성공/실패 메시지, 자동 닫기 흐름을 추가하고 `translations.js`에 전송 상태 문구를 각 언어별로 정리
+
 ## 2026-03-01 20:54 - Inquiry 글자 수 위치 보정
 - `Inquiry` 글자 수 카운터를 아래로 `4px` 이동해 시각 정렬을 보정
 
@@ -285,3 +301,10 @@
 ## 2026-03-01 21:21 - Job Title 문구 변경 및 Position 항목 제거
 - 팝업 입력 항목의 `Title` 라벨을 `Job Title` 기준으로 정리
 - `Position` 입력 항목을 제거하고 상태 구조와 엔터 이동 순서도 함께 정리
+
+## 2026-03-01 21:43 - Business Inquiries 메일 발송 API 구조 설계 문서 작성
+- `Business Inquiries` 팝업 데이터를 특정 이메일 주소로 보내기 위한 백엔드 API 구조 설계를 `Docs/business_inquiries_mail_api_plan.md`에 문서화
+- 프론트엔드 역할, 백엔드 역할, API 명세, 보안, 메일 서비스 선택, 단계별 구현 계획까지 포함해 설계 문서로 정리
+
+## 2026-03-01 22:15 - 기술 용어 및 장애 상황 설명
+- 샌드박스 제한, Git 인덱스 잠금, 네트워크 제한 등 어려운 기술 용어를 대장님이 이해하기 쉽게 비유를 들어 설명함
