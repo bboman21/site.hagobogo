@@ -17,6 +17,48 @@
 
 GitHub Pages는 `dist/` 폴더를 직접 배포 대상으로 선택할 수 없으므로, 현재 저장소 구조에서는 `/ (root)`가 맞습니다.
 
+## Business Inquiries 메일 전송 배포 설정
+
+`Business Inquiries` 팝업 메일 전송은 아래 구조를 사용합니다.
+
+- 프론트엔드: GitHub Pages
+- 메일 API: Vercel 서버리스 함수
+- 메일 발송: Resend
+
+즉, 현재 사이트 화면은 GitHub Pages에서 열리고, 문의 메일 전송은 Vercel의 `/api/business-inquiry`가 처리합니다.
+
+### Vercel 환경 변수
+
+Vercel에는 아래 값을 등록합니다.
+
+```text
+RESEND_API_KEY=실제_리샌드_API_키
+BUSINESS_INQUIRY_TO_EMAIL=bboman21@gmail.com
+BUSINESS_INQUIRY_FROM_EMAIL=인증된_발신_주소
+```
+
+### GitHub Pages 프론트 빌드 시 필요한 값
+
+GitHub Pages에 올릴 프론트는 빌드할 때 아래 값을 함께 넣어야 합니다.
+
+```text
+VITE_BUSINESS_INQUIRY_API_URL=https://your-project-name.vercel.app/api/business-inquiry
+```
+
+이 값은 비밀키가 아니라, 프론트가 호출할 공개 API 주소입니다.
+
+### 운영 빌드 예시
+
+```bash
+VITE_BUSINESS_INQUIRY_API_URL=https://your-project-name.vercel.app/api/business-inquiry npm run build
+```
+
+자세한 설정 절차는 아래 문서를 참고합니다.
+
+- [business_inquiries_vercel_deployment_setup.md](/Users/chris/development/AntigravityWorks/site_hagobogo/Docs/business_inquiries_vercel_deployment_setup.md)
+- [business_inquiries_resend_vercel_plan.md](/Users/chris/development/AntigravityWorks/site_hagobogo/Docs/business_inquiries_resend_vercel_plan.md)
+- [business_inquiries_vercel_implementation_plan.md](/Users/chris/development/AntigravityWorks/site_hagobogo/Docs/business_inquiries_vercel_implementation_plan.md)
+
 ## GitHub Pages 설정 방법
 
 1. GitHub에서 저장소를 엽니다.

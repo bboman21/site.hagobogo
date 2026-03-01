@@ -308,3 +308,12 @@
 
 ## 2026-03-01 22:15 - 기술 용어 및 장애 상황 설명
 - 샌드박스 제한, Git 인덱스 잠금, 네트워크 제한 등 어려운 기술 용어를 대장님이 이해하기 쉽게 비유를 들어 설명함
+
+## 2026-03-01 22:18 - Vercel 배포 설정 문서 작성
+- `Business Inquiries` 메일 전송 기능을 실제 운영 환경에 올리기 위한 `Docs/business_inquiries_vercel_deployment_setup.md` 문서를 작성
+- Vercel 프로젝트 생성 절차, `RESEND_API_KEY`, `BUSINESS_INQUIRY_TO_EMAIL`, `BUSINESS_INQUIRY_FROM_EMAIL` 설정값을 정리
+- `VITE_BUSINESS_INQUIRY_API_URL`이 Vercel 비밀 환경 변수가 아니라 GitHub Pages 프론트 빌드 시점에 주입해야 하는 공개 API 주소라는 점을 분리해서 설명
+
+## 2026-03-01 22:21 - README 메일 전송 배포 요약 추가
+- `README.md`에 `Business Inquiries` 메일 전송용 `GitHub Pages + Vercel + Resend` 배포 요약 섹션을 추가
+- Vercel 환경 변수와 `VITE_BUSINESS_INQUIRY_API_URL`의 역할 차이를 짧게 정리하고 운영 빌드 예시 명령을 함께 기록
