@@ -326,3 +326,7 @@
 ## 2026-03-01 22:32 - 배포 설정 파일 추가
 - `vercel.json`을 추가해 `api/business-inquiry.js` 서버리스 함수의 실행 시간을 명시적으로 관리하도록 정리
 - `.env.production.example` 파일을 추가해 GitHub Pages 운영 빌드 시 필요한 `VITE_BUSINESS_INQUIRY_API_URL` 예시 값을 분리
+
+## 2026-03-01 22:40 - 메일 전송 한 장 체크리스트 작성
+- `Docs/business_inquiries_launch_checklist.md` 문서를 추가해 Vercel 클릭 순서, 환경 변수 최종값, Resend 도메인 인증 순서, 운영 테스트 절차를 한 장짜리로 정리
+- 초보자 기준으로 `Add New... > Project`, `Import`, `Settings > Environment Variables` 등 실제 Vercel 웹 화면에서 눌러야 할 흐름을 포함해 설명
