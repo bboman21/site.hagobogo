@@ -13,6 +13,24 @@ export const TRANSLATIONS = {
             businessInquiries: 'Business Inquiries',
             chatbot: 'Chatbot',
         },
+        inquiryModal: {
+            title: 'Business Inquiries',
+            fields: {
+                name: 'Name',
+                title: 'Job Title',
+                companyName: 'Company Name',
+                email: 'Email',
+                inquiry: 'Inquiry',
+            },
+            buttons: {
+                cancel: 'Cancel',
+                save: 'Save',
+            },
+            errors: {
+                required: 'Required field',
+                invalidEmail: 'Not an email format',
+            },
+        },
         ticker: [
             "Service Advancement: Intin's 'HAGOBOGO' app has significantly enhanced digital healthcare accessibility by introducing its 2.0 update, featuring user-engaging contents such as a sperm encyclopedia and quiz games.",
             "Growing Market Demand: As interest in male infertility prevention and self-health management rises, the 'HAGOBOGO' self-testing kit is gaining significant attention as an essential health appliance for newlyweds and single-person households.",
@@ -36,6 +54,24 @@ export const TRANSLATIONS = {
         ctas: {
             businessInquiries: 'Consultas Comerciales',
             chatbot: 'Chatbot',
+        },
+        inquiryModal: {
+            title: 'Consultas Comerciales',
+            fields: {
+                name: 'Nombre',
+                title: 'Cargo',
+                companyName: 'Nombre de la Empresa',
+                email: 'Correo Electrónico',
+                inquiry: 'Consulta',
+            },
+            buttons: {
+                cancel: 'Cancelar',
+                save: 'Guardar',
+            },
+            errors: {
+                required: 'Required field',
+                invalidEmail: 'Not an email format',
+            },
         },
         ticker: [
             "Avance del servicio: La aplicación 'HAGOBOGO' de Intin ha mejorado significativamente la accesibilidad de la salud digital con su actualización 2.0, incorporando contenidos atractivos como una enciclopedia del esperma y juegos de preguntas.",
@@ -61,6 +97,24 @@ export const TRANSLATIONS = {
             businessInquiries: 'Demandes Commerciales',
             chatbot: 'Chatbot',
         },
+        inquiryModal: {
+            title: 'Demandes Commerciales',
+            fields: {
+                name: 'Nom',
+                title: 'Intitulé du Poste',
+                companyName: "Nom de l'Entreprise",
+                email: 'E-mail',
+                inquiry: 'Demande',
+            },
+            buttons: {
+                cancel: 'Annuler',
+                save: 'Enregistrer',
+            },
+            errors: {
+                required: 'Required field',
+                invalidEmail: 'Not an email format',
+            },
+        },
         ticker: [
             "Avancée du service : l'application 'HAGOBOGO' d'Intin a considérablement amélioré l'accessibilité aux soins de santé numériques grâce à sa mise à jour 2.0, avec des contenus engageants tels qu'une encyclopédie du sperme et des quiz.",
             "Croissance de la demande du marché : avec l'intérêt croissant pour la prévention de l'infertilité masculine et l'autogestion de la santé, le kit d'auto-test 'HAGOBOGO' attire fortement l'attention comme appareil de santé essentiel pour les jeunes mariés et les foyers d'une seule personne.",
@@ -84,6 +138,24 @@ export const TRANSLATIONS = {
         ctas: {
             businessInquiries: '비즈니스 문의',
             chatbot: '챗봇',
+        },
+        inquiryModal: {
+            title: 'Business Inquiries',
+            fields: {
+                name: '이름',
+                title: '직함',
+                companyName: '회사명',
+                email: '이메일',
+                inquiry: '문의 내용',
+            },
+            buttons: {
+                cancel: '취소',
+                save: '저장',
+            },
+            errors: {
+                required: 'Required field',
+                invalidEmail: 'Not an email format',
+            },
         },
         ticker: [
             "서비스 고도화: 인틴의 'HAGOBOGO' 앱은 정자 백과사전과 퀴즈 게임 같은 참여형 콘텐츠를 포함한 2.0 업데이트를 통해 디지털 헬스케어 접근성을 크게 향상시켰습니다.",

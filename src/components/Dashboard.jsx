@@ -3,6 +3,7 @@ import Sphere from './Sphere';
 import SalesCounter from './SalesCounter';
 import DotEngine from './DotEngine';
 import DotEmptyEngine from './DotEmptyEngine';
+import InquiryModal from './InquiryModal';
 import logoHagobogo from '../../assets/svg/logo_haogobogo.svg';
 import { DEFAULT_LANGUAGE, LANGUAGE_OPTIONS, TRANSLATIONS } from '../i18n/translations';
 
@@ -46,6 +47,7 @@ export default function Dashboard() {
         return DEFAULT_LANGUAGE;
     });
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
+    const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
     const [isPulsing, setIsPulsing] = useState(false);
     const [isLineHit, setIsLineHit] = useState(false);
     const [targetMetrics, setTargetMetrics] = useState({
@@ -152,10 +154,21 @@ export default function Dashboard() {
         }, 500);
     }, []);
 
+    const handleCloseInquiryModal = useCallback(() => {
+        setIsInquiryModalOpen(false);
+    }, []);
+
     const copy = TRANSLATIONS[language];
 
     return (
         <div className={`relative w-full min-h-screen flex justify-center overflow-x-hidden bg-[#bfc5cc] text-[#bfc5cc] ${language === 'KR' ? 'lang-kr' : ''}`}>
+            {isInquiryModalOpen && (
+                <InquiryModal
+                    copy={copy.inquiryModal}
+                    onClose={handleCloseInquiryModal}
+                />
+            )}
+
             {/* 실시간 파티클 배경 컨테이너 */}
             <div className="absolute inset-0 w-full h-full min-h-full pointer-events-none">
                 <DotEmptyEngine
@@ -255,7 +268,11 @@ export default function Dashboard() {
                 <SalesCounter sales={sales} isPulsing={isPulsing} mode="bottom" copy={copy.salesCounter} />
 
                 <div className="mt-[80px] flex flex-col items-center gap-[42px]">
-                    <button type="button" className="text-cta text-cta-unified">
+                    <button
+                        type="button"
+                        className="text-cta text-cta-unified"
+                        onClick={() => setIsInquiryModalOpen(true)}
+                    >
                         {copy.ctas.businessInquiries}
                     </button>
                     <button type="button" className="text-cta text-cta-unified">
