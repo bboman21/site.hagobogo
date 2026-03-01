@@ -80,9 +80,10 @@ function createSubject(companyName) {
     return `[HAGOBOGO] New Business Inquiry from ${companyName}`;
 }
 
-function createTextBody({ name, title, companyName, email, inquiry, language }) {
+function createTextBody({ name, title, companyName, email, inquiry, language, submittedAt }) {
     const safeJobTitle = title?.trim() || '-';
     const safeLanguage = language?.trim() || 'EN';
+    const safeSubmittedAt = submittedAt?.trim() || new Date().toISOString();
 
     return [
         `Name: ${name.trim()}`,
@@ -90,6 +91,7 @@ function createTextBody({ name, title, companyName, email, inquiry, language }) 
         `Company Name: ${companyName.trim()}`,
         `Email: ${email.trim()}`,
         `Language: ${safeLanguage}`,
+        `Submitted At: ${safeSubmittedAt}`,
         '',
         'Inquiry:',
         inquiry.trim(),

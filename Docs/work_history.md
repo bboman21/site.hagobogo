@@ -317,3 +317,12 @@
 ## 2026-03-01 22:21 - README 메일 전송 배포 요약 추가
 - `README.md`에 `Business Inquiries` 메일 전송용 `GitHub Pages + Vercel + Resend` 배포 요약 섹션을 추가
 - Vercel 환경 변수와 `VITE_BUSINESS_INQUIRY_API_URL`의 역할 차이를 짧게 정리하고 운영 빌드 예시 명령을 함께 기록
+
+## 2026-03-01 22:28 - 이메일 전송 구현 마무리 보강
+- `InquiryModal.jsx`에서 메일 전송 시 `submittedAt` 값을 함께 보내도록 보강
+- `api/business-inquiry.js` 메일 본문에 제출 시각을 포함해 운영자가 문의 접수 시점을 바로 확인할 수 있도록 정리
+- 루트 `.env.example` 파일을 추가해 Resend, 수신 주소, 발신 주소, `VITE_BUSINESS_INQUIRY_API_URL` 설정 예시를 한 곳에 정리
+
+## 2026-03-01 22:32 - 배포 설정 파일 추가
+- `vercel.json`을 추가해 `api/business-inquiry.js` 서버리스 함수의 실행 시간을 명시적으로 관리하도록 정리
+- `.env.production.example` 파일을 추가해 GitHub Pages 운영 빌드 시 필요한 `VITE_BUSINESS_INQUIRY_API_URL` 예시 값을 분리

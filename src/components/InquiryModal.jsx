@@ -129,6 +129,7 @@ export default function InquiryModal({ copy, language, onClose }) {
             await submitBusinessInquiry({
                 ...formValues,
                 language,
+                submittedAt: new Date().toISOString(),
             });
 
             setSubmitState({
