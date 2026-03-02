@@ -6,6 +6,8 @@ const COLLISION_FADE_DURATION_MS = 1000;
 const ACCELERATION_THRESHOLD_MULTIPLIER = 1.5;
 const ACCELERATION_STEP_MS = 200;
 const ACCELERATION_GAIN_PER_STEP = 1.1;
+const MIN_SPAWN_DELAY_MS = 6000;
+const MAX_SPAWN_DELAY_MS = 12000;
 
 export default function useDotEngine(onHit, collisionRadius) {
     const [dots, setDots] = useState([]);
@@ -87,8 +89,8 @@ export default function useDotEngine(onHit, collisionRadius) {
                     timeInAccelerationZone: 0,
                 });
 
-                // 메인 dot은 너무 자주 나오지 않도록 1시간 기준 약 12~16개만 생성
-                spawnTimerRef.current = 225000 + Math.random() * 75000;
+                // 메인 dot은 1분 기준 약 5~10개가 생성되도록 6~12초 간격으로 설정
+                spawnTimerRef.current = MIN_SPAWN_DELAY_MS + Math.random() * (MAX_SPAWN_DELAY_MS - MIN_SPAWN_DELAY_MS);
             }
 
             dotsRef.current = nextDots;
@@ -100,7 +102,8 @@ export default function useDotEngine(onHit, collisionRadius) {
     }, [collisionRadius]);
 
     useEffect(() => {
-        spawnTimerRef.current = 1000; // 첫 생성은 약간 지연해서 시작
+        // 첫 생성도 동일한 기준을 적용해 전체 발생 빈도가 1분당 5~10개 수준으로 유지되도록 설정
+        spawnTimerRef.current = MIN_SPAWN_DELAY_MS + Math.random() * (MAX_SPAWN_DELAY_MS - MIN_SPAWN_DELAY_MS);
         requestRef.current = requestAnimationFrame(updateDots);
         return () => cancelAnimationFrame(requestRef.current);
     }, [updateDots]);

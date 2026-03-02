@@ -7,7 +7,7 @@ export default function SalesCounter({ sales, isPulsing, mode = 'center', copy }
     if (mode === 'center') {
         return (
             <div className="relative z-20 flex flex-col items-center justify-center text-center animate-[fadeIn_1s_ease-out_forwards] pointer-events-none text-[#4D545A]">
-                <p className={`sphere_count sales-counter-value leading-none tracking-tighter tabular-nums ${isPulsing ? 'animate-[salesPulse_260ms_ease-out]' : ''}`}>
+                <p className={`sphere_count sales-counter-value leading-none tracking-tighter tabular-nums ${isPulsing ? 'is-pulsing' : ''}`}>
                     {formattedSales}
                 </p>
             </div>

@@ -332,8 +332,16 @@ export default function InquiryModal({ copy, language, onClose }) {
         }
     };
 
+    const handleOverlayDoubleClick = (event) => {
+        if (event.target !== event.currentTarget || isSubmitting) {
+            return;
+        }
+
+        onClose();
+    };
+
     return (
-        <div className="inquiry-modal-overlay" role="presentation">
+        <div className="inquiry-modal-overlay" role="presentation" onDoubleClick={handleOverlayDoubleClick}>
             <div
                 className="inquiry-modal-card"
                 role="dialog"
@@ -341,6 +349,15 @@ export default function InquiryModal({ copy, language, onClose }) {
                 aria-labelledby="business-inquiries-title"
             >
                 <form className="inquiry-modal-form" onSubmit={handleSubmit} noValidate>
+                    <button
+                        type="button"
+                        className="inquiry-modal-close-button"
+                        aria-label={copy.buttons.close}
+                        onClick={onClose}
+                        disabled={isSubmitting}
+                    >
+                        <span aria-hidden="true">×</span>
+                    </button>
                     <h2 id="business-inquiries-title" className="inquiry-modal-title">
                         {copy.title}
                     </h2>

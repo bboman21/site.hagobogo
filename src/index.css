@@ -43,6 +43,20 @@ body {
   }
 }
 
+@keyframes salesCounterColorPulse {
+  0% {
+    color: #01b2cf;
+  }
+
+  23.08% {
+    color: #01b2cf;
+  }
+
+  100% {
+    color: #003664;
+  }
+}
+
 @keyframes sphereLinePulse {
   0% {
     border-color: rgba(255, 255, 255, 0.25);
@@ -105,6 +119,11 @@ body {
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 110px;
   font-weight: 200;
+  color: #003664;
+}
+
+.sales-counter-value.is-pulsing {
+  animation: salesPulse 260ms ease-out, salesCounterColorPulse 1300ms linear;
 }
 
 .sales-counter-copy-title,
@@ -156,23 +175,90 @@ body {
 }
 
 .inquiry-modal-card {
-  width: min(100%, 640px);
-  max-height: min(100vh - 80px, 1240px);
-  overflow-y: auto;
-  border-radius: 46px;
+  position: relative;
+  width: min(100%, 480px);
+  max-height: min(100vh - 120px, 930px);
+  overflow: hidden;
+  border-radius: 34px;
   background: rgba(249, 249, 248, 0.97);
   box-shadow: 0 36px 100px rgba(77, 84, 90, 0.26);
 }
 
 .inquiry-modal-form {
-  padding: 70px 64px 62px;
+  position: relative;
+  max-height: min(100vh - 120px, 930px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(87, 93, 100, 0.48) transparent;
+}
+
+.inquiry-modal-form::-webkit-scrollbar {
+  width: 12px;
+}
+
+.inquiry-modal-form::-webkit-scrollbar-track {
+  margin-block: 40px;
+  background: transparent;
+}
+
+.inquiry-modal-form::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: rgba(87, 93, 100, 0.48);
+  background-clip: padding-box;
+}
+
+.inquiry-modal-form::-webkit-scrollbar-thumb:hover {
+  background: rgba(87, 93, 100, 0.62);
+  background-clip: padding-box;
+}
+
+.inquiry-modal-close-button {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #7f878f;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 48px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 180ms ease, color 180ms ease;
+}
+
+.inquiry-modal-close-button:hover {
+  background: rgba(87, 93, 100, 0.08);
+  color: #575d64;
+}
+
+.inquiry-modal-close-button:focus-visible {
+  outline: none;
+  background: rgba(87, 93, 100, 0.12);
+  color: #575d64;
+}
+
+.inquiry-modal-close-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.48;
+}
+
+.inquiry-modal-form {
+  padding: 44px 40px 36px;
 }
 
 .inquiry-modal-title {
-  margin: 0 0 48px;
+  margin: 0 0 24px;
   color: #575d64;
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 46px;
+  font-size: 34px;
   font-weight: 400;
   line-height: 1;
   text-align: center;
@@ -181,13 +267,13 @@ body {
 .inquiry-modal-fields {
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 20px;
 }
 
 .inquiry-field-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 4px;
 }
 
 .inquiry-field-heading {
@@ -200,7 +286,7 @@ body {
 .inquiry-field-label {
   color: #9098a0;
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 400;
   line-height: 1;
 }
@@ -208,7 +294,7 @@ body {
 .inquiry-field-count {
   color: #9098a0;
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1;
 }
@@ -223,7 +309,7 @@ body {
   min-height: 19px;
   color: #ff444f;
   font-family: 'Pretendard', sans-serif;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 1;
   text-align: right;
@@ -240,32 +326,32 @@ body {
   background: #ffffff;
   color: #575d64;
   font-family: 'Pretendard', sans-serif;
-  font-size: 21.333px;
+  font-size: 16px;
   font-weight: 400;
   outline: none;
   transition: border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .inquiry-field-input {
-  min-height: 32px;
-  padding: 12px 12px;
+  min-height: 28px;
+  padding: 10px 10px;
 }
 
 .inquiry-field-select {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 32px;
-  padding: 12px 12px;
+  min-height: 28px;
+  padding: 10px 10px;
   appearance: none;
   text-align: left;
   cursor: pointer;
 }
 
 .inquiry-field-textarea {
-  min-height: 220px;
+  min-height: 170px;
   resize: none;
-  padding: 12px 12px;
+  padding: 10px 10px;
 }
 
 .inquiry-field-input:focus,
@@ -378,8 +464,8 @@ body {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 56px;
-  margin-top: -8px;
+  gap: 42px;
+  margin-top: -4px;
 }
 
 .inquiry-submit-message {
@@ -407,11 +493,11 @@ body {
 }
 
 .inquiry-action-button {
-  min-width: 168px;
-  min-height: 62px;
+  min-width: 126px;
+  min-height: 46px;
   border-radius: 8px;
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 500;
   line-height: 1;
   transition: transform 160ms ease, background-color 160ms ease, color 160ms ease, border-color 160ms ease;
@@ -575,6 +661,14 @@ body {
 }
 
 @media (max-width: 900px) {
+  .inquiry-modal-close-button {
+    top: 6px;
+    right: 6px;
+    width: 72px;
+    height: 72px;
+    font-size: 60px;
+  }
+
   .inquiry-modal-form {
     padding: 52px 34px 44px;
   }
@@ -610,6 +704,18 @@ body {
   .inquiry-modal-card {
     max-height: calc(100vh - 32px);
     border-radius: 26px;
+  }
+
+  .inquiry-modal-form {
+    max-height: calc(100vh - 32px);
+  }
+
+  .inquiry-modal-close-button {
+    top: 2px;
+    right: 2px;
+    width: 68px;
+    height: 68px;
+    font-size: 56px;
   }
 
   .inquiry-modal-form {

@@ -158,7 +158,7 @@ export default function Dashboard() {
         requestAnimationFrame(() => setIsLineHit(true));
         pulseTimeoutRef.current = setTimeout(() => {
             setIsPulsing(false);
-        }, 260);
+        }, 1300);
         lineTimeoutRef.current = setTimeout(() => {
             setIsLineHit(false);
         }, 500);

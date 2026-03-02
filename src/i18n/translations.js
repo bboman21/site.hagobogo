@@ -77,6 +77,7 @@ export const TRANSLATIONS = {
                 inquiry: 'Inquiry',
             },
             buttons: {
+                close: 'Close popup',
                 cancel: 'Cancel',
                 save: 'Save',
                 saving: 'Saving...',
@@ -182,6 +183,7 @@ export const TRANSLATIONS = {
                 inquiry: 'Consulta',
             },
             buttons: {
+                close: 'Cerrar ventana',
                 cancel: 'Cancelar',
                 save: 'Guardar',
                 saving: 'Guardando...',
@@ -287,6 +289,7 @@ export const TRANSLATIONS = {
                 inquiry: 'Demande',
             },
             buttons: {
+                close: 'Fermer la fenêtre',
                 cancel: 'Annuler',
                 save: 'Enregistrer',
                 saving: 'Enregistrement...',
@@ -392,6 +395,7 @@ export const TRANSLATIONS = {
                 inquiry: '문의 내용',
             },
             buttons: {
+                close: '팝업 닫기',
                 cancel: '취소',
                 save: '저장',
                 saving: '전송 중...',
