@@ -226,6 +226,10 @@
 - `assets/data`에 있던 언어별 PDF 파일(`en`, `es`, `fr`, `kr`)을 `public/assets/data`로 복사해 HTML 제안서와 같은 경로에서 열리도록 정리
 - 제안서 HTML의 상대경로(`./Hagobogo_Proposal_*.pdf`)가 배포 환경에서도 그대로 동작할 수 있도록 자산 위치를 맞춤
 
+## 2026-03-03 06:53 - 다른 컴퓨터 서비스 복구 체크리스트 문서 작성
+- `Docs/other_computer_service_recovery_checklist.md` 문서를 추가해 다른 컴퓨터에서 저장소 clone 후 로컬 실행, 환경 파일 작성, 문의 저장 점검, 배포 준비까지 이어가는 순서를 초보자 기준으로 정리
+- 화면 실행과 문의 저장 복구를 구분해 설명하고, `VITE_BUSINESS_INQUIRY_API_URL`, Apps Script 웹앱, Google Sheets, Script Properties가 각각 왜 필요한지 쉽게 풀어 작성
+
 ## 2026-03-01 14:26 - Business Inquiries 팝업 구현 계획서 작성
 - 현재 세션에는 Figma MCP가 연결되어 있지 않아 실제 프레임 원본 분석은 하지 못함
 - 대장님이 설명한 팝업 특성과 현재 랜딩 페이지 구조를 기준으로 `Business Inquiries` 모달 구현 계획서를 `Docs/business_inquiries_popup_plan.md`에 작성
