@@ -397,6 +397,27 @@
 - 수정된 HTML을 `public` 폴더에 반영하여 웹페이지에 즉시 적용
 - 사용자의 요청에 따라 피그마 UI 작업(콘텐츠 재삽입)은 중단하고 코드 수정 사항만 최종 반영 완료
 
+## 2026-03-02 16:32 - Business Inquiries 이메일 알림 구조 재분석
+- 현재 프런트의 `VITE_BUSINESS_INQUIRY_API_URL`이 Google Apps Script 웹앱 URL을 가리키는지 확인하고 실제 요청 경로를 점검
+- `apps-script/business-inquiry/Code.gs`를 다시 읽어 시트 저장 뒤 `MailApp.sendEmail()`이 이미 들어가 있는 상태인지 검토
+- 단순히 “한 줄 추가” 수준이 아니라 현재 배포 경로, 메일 실패 처리, 운영상 한계를 함께 설명할 수 있도록 분석 정리
+
+## 2026-03-02 17:35 - Business Inquiries 간단 운영형 보강
+- `apps-script/business-inquiry/Code.gs`에서 수신 이메일을 코드 상수 대신 Script Properties의 `BUSINESS_INQUIRY_NOTIFICATION_EMAIL` 설정값으로 읽도록 변경
+- `Business Inquiries List` 시트의 `Status` 열을 찾아 메일 발송 성공 또는 실패 사유를 기록하도록 정리
+- Apps Script 응답값을 시트 저장 성공 여부와 메일 발송 성공 여부로 나눠 돌려주도록 변경
+- 같은 이메일의 짧은 시간 내 반복 접수를 120초 동안 제한하는 간단한 스팸 방어를 추가
+
+## 2026-03-02 17:40 - Apps Script 메일 배포 가이드 문서 작성
+- `Docs/business_inquiries_apps_script_mail_deployment_guide.md` 문서를 추가해 초보자 기준으로 최종 `Code.gs` 붙여넣기, `BUSINESS_INQUIRY_NOTIFICATION_EMAIL` 설정, `Status` 열 확인, 웹앱 재배포, 테스트 순서를 한 장으로 정리
+
+## 2026-03-02 17:50 - Apps Script 웹앱 URL 교체
+- `.env.local`, `.env.production`의 `VITE_BUSINESS_INQUIRY_API_URL` 값을 새 Apps Script 웹앱 `/exec` 주소 `AKfycbwlGEs4mvAGsWteL9tw1Xsy5hDMOqubBJF5UAYvizy6cX2W1y3tbMSL3PbB1R5n-_T6` 기준으로 변경
+
+## 2026-03-02 17:53 - Business Inquiries 메일 전송 확인 후 업로드 준비
+- Apps Script 기반 `Business Inquiries` 문의가 실제로 메일 전송까지 정상 동작하는 것을 확인
+- 현재까지의 Apps Script 보강 코드와 배포 가이드를 GitHub에 업로드하기 위한 커밋 및 푸시 작업을 준비
+
 ## 2026-03-02 14:52 - 피그마 introduction 프레임에 제안서 콘텐츠 삽입
 - 피그마 채널 o9jh5c1k에 접속하여 `hagobogo_csv_introduction` 프레임(23:210)의 흰색 아웃라인 보드 `introduction`(23:243, 1199x1600) 확인
 - 수정된 제안서의 모든 콘텐츠를 17개 텍스트 노드로 삽입: 제목, 5개 통계 숫자(시안 색상), 5개 통계 설명, 5개 섹션(Problem/Solution/Global Success/Benefits/Strategy), 연락처 푸터
