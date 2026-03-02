@@ -43,8 +43,12 @@
 - GitHub Pages 업로드용 `public/.nojekyll` 및 실행/배포 안내용 `README.md`를 정리
 
 ## 2026-02-28 23:01 - 작업 이력 문서화
-- `Docs/work_history.md`에 금일 작업 내용을 요약 기록
-- 이후 항목을 시간대별로 다시 나눌 수 있도록 작업 흐름 기준으로 정리 방식 보완
+- `Docs/work_history.md`에 금일
+### 2026-03-02 15:18
+- `assets/data/하고보고 제품 입점 제안서_1page.html` 파일의 푸터(footer) 영역 주석 처리 (대장님 직접 수정)
+- 제안서 내 특정 카드 섹션의 배경색을 `#ffffff` (투명도 50%)로 수정 요청 반영 중
+- `src/index.css` 및 제안서 HTML 스타일 확인 및 수정
+항목을 시간대별로 다시 나눌 수 있도록 작업 흐름 기준으로 정리 방식 보완
 
 ## 2026-02-28 23:06 - Git 저장소 초기화 및 원격 푸시 준비
 - `site_hagobogo` 폴더가 Git 저장소가 아닌 상태임을 확인하고, 별도 저장소로 초기화하는 방향으로 정리
@@ -58,6 +62,14 @@
 
 ## 2026-02-28 23:16 - README 배포 URL 추가
 - `README.md` 상단에 GitHub Pages 실제 접속 주소 `https://bboman21.github.io/site.hagobogo/dist/index.html`를 추가
+
+## 2026-03-02 16:30 - 제안서 세부 디자인 및 반응형 고도화
+- `stat-number` 크기 확대(30pt) 및 `stat-unit` 비율 조정(50%)
+- `stat-desc` 및 `.grid-2-item span` 행간 1.2로 최적화
+- `introduction-board` 높이 축소(aspect-ratio 210/275)
+- `max-width: 400px` 미디어 쿼리 추가로 통계 그리드 3x2 배열 적용
+- Dashboard 상단 여백 축소(20px) 및 `benefit-box` 보더 제거
+- 모든 수정 사항 GitHub 저장소 업로드 완료
 
 ## 2026-02-28 23:23 - sphere 원본 SVG 표시 방식 정리
 - `sphere` 렌더에서 `imgSphere.svg` 위에 겹치던 별도 `sphere_line` 레이어를 제거
@@ -340,3 +352,52 @@
 - `.env.local`, `.env.production`에 새 Apps Script 웹앱 URL `AKfycbwK1C4Ps8LWZuaLs7qJDwfQ4eqCI88BIGP4WatdWMkqM0BL_kOl0ycPXfyFraQH8vvS`가 정확히 반영된 것을 확인
 - 기존 Vite 개발 서버를 종료하고 `npm run dev -- --host 127.0.0.1`로 다시 시작해 `http://127.0.0.1:5173/`에서 새 환경값 기준으로 로컬 확인이 가능하도록 정리
 - `npm run build`를 다시 실행해 `dist/assets/app-De1ia2SL.js` 운영 번들에 새 웹앱 URL이 포함되고 직전 URL 문자열은 제거된 것을 확인
+
+## 2026-03-02 14:04 - Figma MCP 플러그인 연결 설정
+- Bun 런타임 `1.3.10`을 `~/.bun/bin/bun`에 설치하고 `~/.zshrc` PATH에 등록
+- `~/.gemini/antigravity/mcp_config.json`의 기존 `figma` SSE 설정(`http://127.0.0.1:3845/mcp`)을 `bunx cursor-talk-to-figma-mcp@latest` 기반 MCP 서버 설정(`TalkToFigma`)으로 교체
+- `bunx cursor-talk-to-figma-socket` 명령으로 WebSocket 서버를 포트 `3055`에서 실행해 Figma 플러그인 연결 준비 완료
+
+## 2026-03-02 14:20 - 로컬 개발 서버 실행
+- 프로젝트 실행 스크립트를 확인해 `npm run dev`로 개발 서버를 시작하는 구조임을 점검
+- 현재 실행 환경에서 바로 확인할 수 있도록 로컬 개발 서버를 실행하고 접속 주소를 확인
+
+## 2026-03-02 16:28 - 현재 작업본 커밋 및 푸시 준비
+- `src/components/Dashboard.jsx`, `src/index.css` 수정 사항과 신규 제안서 자료 파일, 챗봇 버튼 SVG 파일이 커밋 대상인지 점검
+- 저장소가 `main` 브랜치와 `origin` 원격을 사용 중인 것을 확인하고 현재 작업본 전체를 커밋해 푸시하는 작업을 준비
+
+## 2026-03-02 14:22 - 챗봇 플로팅 버튼 우측 하단 배치
+- 피그마 `btn_chatbot` 프레임에서 레오 캐릭터를 SVG로 추출해 `assets/svg/btn_chatbot_leo.svg`에 저장
+- `Dashboard.jsx`에서 기존 중앙 CTA 영역의 `Chatbot` 텍스트 버튼을 제거하고, 화면 우측 하단 고정 플로팅 원형 버튼(`chatbot-fab`)으로 교체
+- `index.css`에 `.chatbot-fab` 스타일 추가: `position: fixed`, 72px 원형, 흰색 배경, 호버 시 확대 및 시안 그림자, 모바일 대응(60px)
+- 브라우저에서 확인 결과 우측 하단에 레오 캐릭터 아이콘이 정상 배치됨
+
+## 2026-03-02 14:33 - 챗봇 버튼 아이콘 교체
+- 직접 작성한 `btn_chatbot_leo.svg`에서 대장님이 준비한 `btn_chatbot.svg`로 챗봇 버튼 아이콘을 교체
+
+## 2026-03-02 14:36 - 챗봇 버튼 스타일 보정
+- 버튼 크기를 72px → 90px로 확대
+- SVG 자체에 흰 원이 포함되어 이중 테두리가 보이는 문제를 해결하기 위해 버튼 배경을 `transparent`로 변경
+- 아이콘 원형 클리핑(`border-radius: 50%`)을 제거하고, `drop-shadow`로 자연스러운 그림자만 유지
+
+## 2026-03-02 14:42 - Business Inquiries 버튼 크기 및 아웃라인 스타일 변경
+- `text-cta-unified` 폰트 크기를 기본 48px / ≤900px 32px / ≤400px 24px로 축소
+- 1px 아웃라인, `border-radius: 999px` 라운드, 내부 패딩 12px/40px 적용
+- 보더 색상이 텍스트 색상과 동일하게 기본 `#4d545a`, 호버 시 `#ffffff`로 전환
+
+## 2026-03-02 14:46 - 하고보고 입점 제안서 그래픽 스타일 통일
+- `assets/data/하고보고 제품 입점 제안서_1page.html`의 스타일을 메인 페이지(app.html)와 동일한 디자인 언어로 전면 리디자인
+- 폰트를 Noto Sans KR → Barlow Condensed(제목) + Pretendard(본문)으로 변경
+- 색상을 진한 파랑 #1e3a8a → 회색 #4d545a(주) + 시안 #2BC4E5(포인트)로 변경
+- 카드/테이블에 라운드 8-12px, 반투명 배경, 깔끔한 보더 적용
+- 인라인 스타일을 모두 제거하고 정돈된 CSS 클래스 구조로 정리
+
+## 2026-03-02 15:15 - 제안서 타이틀 번호 및 제목 색상 수정
+- 제안서 HTML(`assets/data/하고보고 제품 입점 제안서_1page.html`)의 섹션 번호 및 'Stage 1, 2, 3' 라벨 색상을 시안(#2BC4E5)에서 메인 텍스트 색상(#4D545A)으로 수정
+- 수정된 HTML을 `public` 폴더에 반영하여 웹페이지에 즉시 적용
+- 사용자의 요청에 따라 피그마 UI 작업(콘텐츠 재삽입)은 중단하고 코드 수정 사항만 최종 반영 완료
+
+## 2026-03-02 14:52 - 피그마 introduction 프레임에 제안서 콘텐츠 삽입
+- 피그마 채널 o9jh5c1k에 접속하여 `hagobogo_csv_introduction` 프레임(23:210)의 흰색 아웃라인 보드 `introduction`(23:243, 1199x1600) 확인
+- 수정된 제안서의 모든 콘텐츠를 17개 텍스트 노드로 삽입: 제목, 5개 통계 숫자(시안 색상), 5개 통계 설명, 5개 섹션(Problem/Solution/Global Success/Benefits/Strategy), 연락처 푸터
+- 메인 페이지와 동일한 색상 팔레트(회색 #4d545a, 시안 #2BC4E5) 적용

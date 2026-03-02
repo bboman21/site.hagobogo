@@ -5,6 +5,7 @@ import DotEngine from './DotEngine';
 import DotEmptyEngine from './DotEmptyEngine';
 import InquiryModal from './InquiryModal';
 import logoHagobogo from '../../assets/svg/logo_haogobogo.svg';
+import chatbotLeo from '../../assets/svg/btn_chatbot.svg';
 import { DEFAULT_LANGUAGE, LANGUAGE_OPTIONS, TRANSLATIONS } from '../i18n/translations';
 
 const SALES_STORAGE_KEY = 'sphere_count';
@@ -268,7 +269,16 @@ export default function Dashboard() {
 
                 <SalesCounter sales={sales} isPulsing={isPulsing} mode="bottom" copy={copy.salesCounter} />
 
-                <div className="mt-[80px] flex flex-col items-center gap-[42px]">
+                {/* 제안서 삽입 영역 (흰색 아웃라인 보드) */}
+                <div className="introduction-board">
+                    <iframe
+                        src="/assets/data/하고보고 제품 입점 제안서_1page.html"
+                        title="HAGOBOGO Introduction"
+                        className="introduction-iframe"
+                    />
+                </div>
+
+                <div className="mt-[20px] flex flex-col items-center gap-[42px]">
                     <button
                         type="button"
                         className="text-cta text-cta-unified"
@@ -276,10 +286,16 @@ export default function Dashboard() {
                     >
                         {copy.ctas.businessInquiries}
                     </button>
-                    <button type="button" className="text-cta text-cta-unified">
-                        {copy.ctas.chatbot}
-                    </button>
                 </div>
+
+                {/* 우측 하단 플로팅 챗봇 버튼 */}
+                <button
+                    type="button"
+                    className="chatbot-fab"
+                    aria-label={copy.ctas.chatbot}
+                >
+                    <img src={chatbotLeo} alt="Chatbot" className="chatbot-fab-icon" />
+                </button>
 
                 <footer className="site-footer mt-[200px]">
                     <p>{copy.footer[0]}</p>
