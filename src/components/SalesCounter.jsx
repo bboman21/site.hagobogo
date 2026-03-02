@@ -15,7 +15,7 @@ export default function SalesCounter({ sales, isPulsing, mode = 'center', copy }
     }
 
     return (
-        <div className="z-20 flex flex-col items-center justify-center gap-[4px] text-center text-[#ffffff] pointer-events-none animate-[fadeIn_1s_ease-out_forwards]">
+        <div className="sales-counter-copy-group z-20 flex flex-col items-center justify-center gap-[4px] text-center text-[#ffffff] pointer-events-none animate-[fadeIn_1s_ease-out_forwards]">
             <p className="sales-counter-copy-title text-2xl md:text-[28px] lg:text-[32px] leading-[1.2]">
                 <span className="font-semibold tracking-wide">{copy.titleEmphasis}</span> {copy.titleText}
             </p>

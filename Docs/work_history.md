@@ -449,6 +449,26 @@
 ## 2026-03-02 18:07 - 제안서 버튼 및 챗봇 크기 수정 업로드 준비
 - 제안서 HTML의 `Download PDF` 버튼 배치 및 스타일 수정 사항과 챗봇 버튼 30% 축소 내용을 GitHub에 업로드하기 위한 커밋 및 푸시 작업을 준비
 
+## 2026-03-02 18:09 - 누적 판매량 안내 문구 위치 상향
+- `src/components/SalesCounter.jsx`에 하단 카피 블록용 클래스를 추가하고 `src/index.css`에서 `transform: translateY(-20px)`를 적용해 `HAGOBOGO Cumulative Sales Volume` 문구를 20px 위로 이동
+
+## 2026-03-02 18:13 - 누적 판매량 안내 문구 위치 보정 방식 수정
+- `fadeIn` 애니메이션의 `transform` 값과 충돌해 이전 이동값이 보이지 않는 문제를 확인
+- `src/index.css`의 `.sales-counter-copy-group` 이동 방식을 `transform`에서 `position: relative; top: -20px;`로 바꿔 실제로 20px 위로 적용되도록 수정
+
+## 2026-03-02 18:18 - 메인 dot 발생 빈도 대폭 축소
+- `src/hooks/useDotEngine.js`의 메인 dot 다음 생성 간격을 `3000 + Math.random() * 3000`에서 `225000 + Math.random() * 75000`으로 변경
+- 첫 생성은 기존처럼 약 1초 뒤에 시작되지만, 이후 생성은 1시간 기준 약 12~16개 수준으로 줄어들도록 조정
+
+## 2026-03-02 18:19 - 배경 빈 dot 발생 빈도 2배 증가
+- `src/hooks/useDotEmptyEngine.js`의 `MIN_SPAWN_DELAY_MS`, `MAX_SPAWN_DELAY_MS`를 `1200/2000`에서 `600/1000`으로 변경해 배경 빈 dot 생성 간격을 절반으로 축소
+
+## 2026-03-02 18:20 - dot 발생 빈도 설정 주석 보강
+- `src/hooks/useDotEngine.js`, `src/hooks/useDotEmptyEngine.js`의 수정된 생성 간격 값 옆에 의도를 설명하는 한국어 주석을 추가
+
+## 2026-03-02 18:21 - dot 빈도 및 판매량 문구 위치 수정 업로드 준비
+- 메인 dot, 배경 dot 발생 빈도 조정과 `HAGOBOGO Cumulative Sales Volume` 문구 위치 보정 내용을 GitHub에 업로드하기 위한 커밋 및 푸시 작업을 준비
+
 ## 2026-03-02 14:52 - 피그마 introduction 프레임에 제안서 콘텐츠 삽입
 - 피그마 채널 o9jh5c1k에 접속하여 `hagobogo_csv_introduction` 프레임(23:210)의 흰색 아웃라인 보드 `introduction`(23:243, 1199x1600) 확인
 - 수정된 제안서의 모든 콘텐츠를 17개 텍스트 노드로 삽입: 제목, 5개 통계 숫자(시안 색상), 5개 통계 설명, 5개 섹션(Problem/Solution/Global Success/Benefits/Strategy), 연락처 푸터

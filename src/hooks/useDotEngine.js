@@ -87,8 +87,8 @@ export default function useDotEngine(onHit, collisionRadius) {
                     timeInAccelerationZone: 0,
                 });
 
-                // 다음 생성은 3~6초 뒤로 설정
-                spawnTimerRef.current = 3000 + Math.random() * 3000;
+                // 메인 dot은 너무 자주 나오지 않도록 1시간 기준 약 12~16개만 생성
+                spawnTimerRef.current = 225000 + Math.random() * 75000;
             }
 
             dotsRef.current = nextDots;

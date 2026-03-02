@@ -113,6 +113,11 @@ body {
   font-weight: 400;
 }
 
+.sales-counter-copy-group {
+  position: relative;
+  top: -20px;
+}
+
 .text-nav-cta {
   display: inline-flex;
   align-items: center;

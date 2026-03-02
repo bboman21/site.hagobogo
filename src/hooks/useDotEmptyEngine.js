@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 
-const MIN_SPAWN_DELAY_MS = 1200;
-const MAX_SPAWN_DELAY_MS = 2000;
+// 배경 빈 dot은 기존보다 2배 더 자주 보이도록 생성 간격을 절반으로 줄임
+const MIN_SPAWN_DELAY_MS = 600;
+const MAX_SPAWN_DELAY_MS = 1000;
 const MIN_BOUNCE_ANGLE_RAD = (45 * Math.PI) / 180;
 const MAX_BOUNCE_ANGLE_RAD = (80 * Math.PI) / 180;
 const OUT_OF_FRAME_DELETE_DELAY_MS = 1000;
