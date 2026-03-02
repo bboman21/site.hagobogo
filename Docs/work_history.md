@@ -469,6 +469,29 @@
 ## 2026-03-02 18:21 - dot 빈도 및 판매량 문구 위치 수정 업로드 준비
 - 메인 dot, 배경 dot 발생 빈도 조정과 `HAGOBOGO Cumulative Sales Volume` 문구 위치 보정 내용을 GitHub에 업로드하기 위한 커밋 및 푸시 작업을 준비
 
+## 2026-03-02 18:24 - 영문 제안서 HTML 파일명 변경
+- `assets/data/하고보고 제품 입점 제안서_1page.html` 파일명을 `assets/data/Hagobogo_Proposal_en_v01.html`로 변경
+- `src/components/Dashboard.jsx`의 iframe 경로도 새 파일명으로 함께 수정
+
+## 2026-03-02 18:27 - 스페인어 제안서 텍스트 번역 반영
+- `assets/data/Hagobogo_Proposal_es_v01.html`의 제목, 본문, 표 헤더, 단계 설명, 다운로드 버튼 문구를 스페인어로 번역
+
+## 2026-03-02 18:29 - 프랑스어 제안서 텍스트 번역 반영
+- `assets/data/Hagobogo_Proposal_fr_v01.html`의 제목, 본문, 표 헤더, 단계 설명, 다운로드 버튼 문구를 프랑스어로 번역
+
+## 2026-03-02 18:30 - 한국어 제안서 텍스트 번역 반영
+- `assets/data/Hagobogo_Proposal_kr_v01.html`의 제목, 본문, 표 헤더, 단계 설명, 다운로드 버튼 문구를 한국어로 번역
+
+## 2026-03-02 18:36 - 언어별 제안서 PDF 다운로드 경로 분리
+- `Hagobogo_Proposal_en_v01.html`, `Hagobogo_Proposal_es_v01.html`, `Hagobogo_Proposal_fr_v01.html`, `Hagobogo_Proposal_kr_v01.html`의 `Download PDF` 버튼이 각 언어별 PDF 파일을 가리키도록 링크와 다운로드 파일명을 개별 설정
+
+## 2026-03-02 18:38 - 언어 전환 시 제안서 파일 자동 매칭
+- `src/components/Dashboard.jsx`에 언어 코드별 제안서 파일명 매핑을 추가
+- 언어 전환 시 iframe이 `EN`, `ES`, `FR`, `KR`에 맞는 `Hagobogo_Proposal_*_v01.html` 파일을 자동으로 열도록 수정
+
+## 2026-03-02 18:40 - 다국어 제안서 파일 분리 업로드 준비
+- 기존 단일 제안서 파일 대신 언어별 HTML/PDF 파일 세트를 사용하는 구조로 정리된 현재 변경사항을 GitHub에 업로드하기 위한 커밋 및 푸시 작업을 준비
+
 ## 2026-03-02 14:52 - 피그마 introduction 프레임에 제안서 콘텐츠 삽입
 - 피그마 채널 o9jh5c1k에 접속하여 `hagobogo_csv_introduction` 프레임(23:210)의 흰색 아웃라인 보드 `introduction`(23:243, 1199x1600) 확인
 - 수정된 제안서의 모든 콘텐츠를 17개 텍스트 노드로 삽입: 제목, 5개 통계 숫자(시안 색상), 5개 통계 설명, 5개 섹션(Problem/Solution/Global Success/Benefits/Strategy), 연락처 푸터

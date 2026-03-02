@@ -10,6 +10,12 @@ import { DEFAULT_LANGUAGE, LANGUAGE_OPTIONS, TRANSLATIONS } from '../i18n/transl
 
 const SALES_STORAGE_KEY = 'sphere_count';
 const LANGUAGE_STORAGE_KEY = 'site_language';
+const PROPOSAL_FILE_BY_LANGUAGE = {
+    EN: 'Hagobogo_Proposal_en_v01.html',
+    ES: 'Hagobogo_Proposal_es_v01.html',
+    FR: 'Hagobogo_Proposal_fr_v01.html',
+    KR: 'Hagobogo_Proposal_kr_v01.html',
+};
 
 export default function Dashboard() {
     const homeHref = `${import.meta.env.BASE_URL || './'}app.html`;
@@ -160,6 +166,7 @@ export default function Dashboard() {
     }, []);
 
     const copy = TRANSLATIONS[language];
+    const proposalFileName = PROPOSAL_FILE_BY_LANGUAGE[language] || PROPOSAL_FILE_BY_LANGUAGE.EN;
 
     return (
         <div className={`relative w-full min-h-screen flex justify-center overflow-x-hidden bg-[#bfc5cc] text-[#bfc5cc] ${language === 'KR' ? 'lang-kr' : ''}`}>
@@ -272,7 +279,7 @@ export default function Dashboard() {
                 {/* 제안서 삽입 영역 (흰색 아웃라인 보드) */}
                 <div className="introduction-board">
                     <iframe
-                        src="/assets/data/하고보고 제품 입점 제안서_1page.html"
+                        src={`/assets/data/${proposalFileName}`}
                         title="HAGOBOGO Introduction"
                         className="introduction-iframe"
                     />
