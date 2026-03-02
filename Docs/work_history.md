@@ -505,13 +505,58 @@
 - `src/i18n/translations.js`에 `EN`, `ES`, `FR`, `KR` 기준 챗봇 제목, 안내 문구, FAQ 질문 7개, 답변, 버튼 문구를 추가
 - `src/index.css`에 챗봇 패널 레이아웃과 모바일 대응 스타일을 추가하고 `npm run build`로 번들링이 정상 완료되는 것을 확인
 
+## 2026-03-02 21:10 - README 운영 배포 구조 정정
+- `README.md`의 문의 전송 구조 설명을 현재 실제 운영 기준인 `GitHub Pages + Google Apps Script + Google Sheets + MailApp` 구조로 수정
+- 기존 `Vercel + Resend` 관련 설명은 과거 참고 문서라는 점을 명시해 현재 운영 문서와 혼동되지 않도록 정리
+
+## 2026-03-02 21:16 - README 배포 설명 간결화
+- `README.md`의 배포 및 운영 설명에서 중복되던 안내를 줄이고 현재 구조, Apps Script 설정, 빌드/실행, GitHub Pages 설정만 빠르게 확인할 수 있도록 재정리
+
+## 2026-03-02 21:17 - 원격 GitHub Actions 배포 구조 기준으로 문서 재정렬
+- 원격 저장소가 이미 `GitHub Actions -> dist 빌드 결과 업로드 -> GitHub Pages 배포` 구조로 운영 중인 것을 확인
+- README는 이 최신 구조와 `GitHub Pages + Apps Script` 문의 처리 흐름을 함께 설명하는 방향으로 최종 정리
+- 루트 `index.html` 직접 서빙 구조, `build-assets` 자산 폴더, `README` 정리 내용을 GitHub에 업로드하기 위한 커밋 및 푸시 작업을 준비
+
 ## 2026-03-02 14:52 - 피그마 introduction 프레임에 제안서 콘텐츠 삽입
 - 피그마 채널 o9jh5c1k에 접속하여 `hagobogo_csv_introduction` 프레임(23:210)의 흰색 아웃라인 보드 `introduction`(23:243, 1199x1600) 확인
 - 수정된 제안서의 모든 콘텐츠를 17개 텍스트 노드로 삽입: 제목, 5개 통계 숫자(시안 색상), 5개 통계 설명, 5개 섹션(Problem/Solution/Global Success/Benefits/Strategy), 연락처 푸터
 - 메인 페이지와 동일한 색상 팔레트(회색 #4d545a, 시안 #2BC4E5) 적용
 
-## 2026-03-02 19:02 - GitHub Actions CI/CD 자동 배포 구성
-- GitHub Pages 배포가 이전 내용만 노출되는 문제를 진단: 로컬 `dist/` 빌드 해시(`app-BcXhplzy.js`)와 원격 해시(`app-De1ia2SL.js`)가 불일치하여 최신 빌드가 push되지 않은 것이 원인
-- `.github/workflows/deploy.yml` 워크플로우 파일 생성: `main` 브랜치 push 시 자동으로 `npm ci` → `.env.production` 생성(GitHub Secrets 기반) → `npm run build` → GitHub Pages 배포
+## 2026-03-02 19:02 - GitHub Pages 배포 문제 진단
+- GitHub Pages에서 이전 내용만 노출되고 최신 내용이 보이지 않는 문제를 상세 진단
+- **핵심 원인 발견**: 로컬 `dist/assets/` 빌드 해시(`app-BcXhplzy.js`, `app-DfuLj2cC.css`)와 GitHub 원격 해시(`app-De1ia2SL.js`, `app-CJCDJBaD.css`)가 불일치 → 최신 빌드 결과물이 push되지 않은 상태
+- `.github/` 워크플로우 폴더가 없어 CI/CD 자동 빌드가 구성되어 있지 않음을 확인
+- 진단 보고서를 작성하고 즉시 해결(수동 빌드+push)과 근본 해결(GitHub Actions CI/CD) 두 가지 옵션 제시 → 대장님이 옵션 B(GitHub Actions 자동화) 선택
+
+## 2026-03-02 19:05 - GitHub Actions CI/CD 자동 배포 파일 생성
+- `.github/workflows/deploy.yml` 워크플로우 파일 생성
+  - 트리거: `main` 브랜치 push 시 + 수동 실행(`workflow_dispatch`)
+  - 빌드: Node.js 20 → `npm ci` → GitHub Secrets에서 `.env.production` 생성 → `npm run build`
+  - 배포: `dist/` 폴더를 `actions/upload-pages-artifact@v3`로 업로드 → `actions/deploy-pages@v4`로 GitHub Pages 배포
 - `.gitignore`에 `dist/` 추가: CI/CD가 자동 빌드하므로 빌드 산출물을 Git 추적에서 제외
-- 대장님이 GitHub 웹에서 해야 할 작업: ① Settings → Pages → Source를 "GitHub Actions"으로 변경 ② Settings → Secrets → `VITE_BUSINESS_INQUIRY_API_URL` 등록
+- `work_history.md`에 작업 이력 기록
+
+## 2026-03-02 20:25 - GitHub Secrets 등록 및 Pages 소스 변경
+- 대장님이 GitHub 웹에서 Settings → Secrets → Actions에 `VITE_BUSINESS_INQUIRY_API_URL` 시크릿 등록 완료
+- 대장님이 Settings → Pages → Source를 "Deploy from a branch"에서 **"GitHub Actions"**으로 변경 완료
+
+## 2026-03-02 20:28 - dist/ 추적 해제 및 커밋·push
+- 대장님 터미널에서 `git rm -r --cached dist/` 실행하여 `dist/` 폴더 Git 추적 해제 (로컬 파일은 유지)
+- `git add -A && git commit -m "GitHub Actions CI/CD 자동 배포 구성"` 으로 커밋 (`a98d41c`, 19개 파일 변경, 1248 추가 / 133 삭제)
+- `git push origin main` 으로 원격 push 완료
+
+## 2026-03-02 20:44 - 404 해결 및 자동 배포 성공 확인
+- Pages 소스 변경 후에도 이전 배포 설정으로 인한 404 발생 → Push 후 GitHub Actions가 트리거되지 않은 상태임을 확인
+- GitHub API를 통해 `README.md`를 GitHub Actions 기반 배포 문서로 업데이트하여 워크플로우 트리거 (`83333d7`)
+- GitHub Actions 워크플로우 실행 결과: **build 13초 + deploy 11초 = 총 31초**에 자동 배포 성공 ✅
+- `https://bboman21.github.io/site.hagobogo/` 에서 최신 내용 정상 표시 확인
+- 이후 소스코드 수정 → `git push`만 하면 자동으로 빌드+배포되는 CI/CD 파이프라인 구축 완료
+
+## 2026-03-02 20:52 - 배포 사이트 제안서 iframe 404 수정
+- 배포된 사이트에서 제안서 iframe이 404를 반환하는 문제 확인
+- **원인 1**: 제안서 파일(`Hagobogo_Proposal_*.html/pdf`)이 `assets/data/`에 있어 Vite 빌드 시 `dist/`에 포함되지 않음 (Vite는 `public/` 폴더만 빌드 결과에 복사)
+- **원인 2**: iframe src가 절대 경로(`/assets/data/...`)라 GitHub Pages 하위 경로(`/site.hagobogo/`)에서 루트로 접근하여 404 발생
+- **수정 1**: 제안서 HTML/PDF 8개 파일을 `public/assets/data/`로 복사하여 Vite 빌드에 포함되도록 변경
+- **수정 2**: `Dashboard.jsx`의 iframe src를 `import.meta.env.BASE_URL` 기반 경로로 변경하여 모든 배포 환경에서 정상 동작하도록 수정
+- **GitHub API push**: `public/assets/data/`에 영/스/불/한 제안서 HTML 4개 파일 push(`009e08c`), `Dashboard.jsx` iframe src 수정 push(`65fd55f`)
+- GitHub Actions 자동 배포 트리거 → 배포 완료 후 브라우저에서 제안서 iframe 정상 표시 확인 ✅

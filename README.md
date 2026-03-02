@@ -3,7 +3,6 @@
 페이지 주소: `https://bboman21.github.io/site.hagobogo/`
 
 ## 배포
-
 GitHub Actions를 통해 `main` 브랜치에 push하면 자동으로 빌드 → GitHub Pages 배포됩니다.
 
 - 워크플로우: `.github/workflows/deploy.yml`
@@ -18,17 +17,26 @@ GitHub Actions를 통해 `main` 브랜치에 push하면 자동으로 빌드 → 
 VITE_BUSINESS_INQUIRY_API_URL=Apps Script 웹앱 URL
 ```
 
-## Business Inquiries 메일 전송
-
-`Business Inquiries` 팝업 문의는 Google Apps Script 웹앱을 통해 처리됩니다.
+## 현재 사이트 구조
 
 - 프론트엔드: GitHub Pages
 - 데이터 저장: Google Sheets
 - 메일 알림: Apps Script MailApp
 
-자세한 설정 절차는 아래 문서를 참고합니다.
+상세 설정 문서:
 
 - `Docs/business_inquiries_apps_script_mail_deployment_guide.md`
+- `Docs/business_inquiries_google_sheets_checklist.md`
+
+Apps Script 쪽 필수 조건:
+
+- 시트 이름: `Business Inquiries List`
+- 시트 헤더에 `Status` 열 포함
+- Script Properties:
+
+```text
+BUSINESS_INQUIRY_NOTIFICATION_EMAIL=알림을 받을 실제 이메일 주소
+```
 
 ## 로컬 개발 실행
 
@@ -54,3 +62,9 @@ npm run local
 ```
 
 macOS에서 더블클릭으로 실행하고 싶다면 `preview.command`를 사용할 수 있습니다.
+
+참고:
+
+- `Vercel + Resend` 관련 문서는 과거 검토안입니다.
+- 현재 운영 기준은 `GitHub Pages + Apps Script`입니다.
+- macOS에서 더블클릭 실행이 필요하면 `preview.command`를 사용할 수 있습니다.
