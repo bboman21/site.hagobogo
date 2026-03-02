@@ -4,6 +4,7 @@ import SalesCounter from './SalesCounter';
 import DotEngine from './DotEngine';
 import DotEmptyEngine from './DotEmptyEngine';
 import InquiryModal from './InquiryModal';
+import ChatbotPanel from './ChatbotPanel';
 import logoHagobogo from '../../assets/svg/logo_haogobogo.svg';
 import chatbotLeo from '../../assets/svg/btn_chatbot.svg';
 import { DEFAULT_LANGUAGE, LANGUAGE_OPTIONS, TRANSLATIONS } from '../i18n/translations';
@@ -55,6 +56,7 @@ export default function Dashboard() {
     });
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
     const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
+    const [isChatbotOpen, setIsChatbotOpen] = useState(false);
     const [isPulsing, setIsPulsing] = useState(false);
     const [isLineHit, setIsLineHit] = useState(false);
     const [targetMetrics, setTargetMetrics] = useState({
@@ -67,6 +69,7 @@ export default function Dashboard() {
     const lineTimeoutRef = useRef(null);
     const sphereGroupRef = useRef(null);
     const languageMenuRef = useRef(null);
+    const proposalBoardRef = useRef(null);
 
     useEffect(() => {
         return () => {
@@ -165,6 +168,19 @@ export default function Dashboard() {
         setIsInquiryModalOpen(false);
     }, []);
 
+    const handleOpenInquiryModal = useCallback(() => {
+        setIsChatbotOpen(false);
+        setIsInquiryModalOpen(true);
+    }, []);
+
+    const handleViewProposal = useCallback(() => {
+        setIsChatbotOpen(false);
+        proposalBoardRef.current?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+        });
+    }, []);
+
     const copy = TRANSLATIONS[language];
     const proposalFileName = PROPOSAL_FILE_BY_LANGUAGE[language] || PROPOSAL_FILE_BY_LANGUAGE.EN;
 
@@ -175,6 +191,15 @@ export default function Dashboard() {
                     copy={copy.inquiryModal}
                     language={language}
                     onClose={handleCloseInquiryModal}
+                />
+            )}
+
+            {isChatbotOpen && (
+                <ChatbotPanel
+                    copy={copy.chatbotPanel}
+                    onClose={() => setIsChatbotOpen(false)}
+                    onOpenInquiry={handleOpenInquiryModal}
+                    onViewProposal={handleViewProposal}
                 />
             )}
 
@@ -277,7 +302,7 @@ export default function Dashboard() {
                 <SalesCounter sales={sales} isPulsing={isPulsing} mode="bottom" copy={copy.salesCounter} />
 
                 {/* 제안서 삽입 영역 (흰색 아웃라인 보드) */}
-                <div className="introduction-board">
+                <div ref={proposalBoardRef} className="introduction-board">
                     <iframe
                         src={`/assets/data/${proposalFileName}`}
                         title="HAGOBOGO Introduction"
@@ -289,7 +314,7 @@ export default function Dashboard() {
                     <button
                         type="button"
                         className="text-cta text-cta-unified"
-                        onClick={() => setIsInquiryModalOpen(true)}
+                        onClick={handleOpenInquiryModal}
                     >
                         {copy.ctas.businessInquiries}
                     </button>
@@ -300,6 +325,8 @@ export default function Dashboard() {
                     type="button"
                     className="chatbot-fab"
                     aria-label={copy.ctas.chatbot}
+                    aria-expanded={isChatbotOpen}
+                    onClick={() => setIsChatbotOpen((prev) => !prev)}
                 >
                     <img src={chatbotLeo} alt="Chatbot" className="chatbot-fab-icon" />
                 </button>

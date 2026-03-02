@@ -492,7 +492,26 @@
 ## 2026-03-02 18:40 - 다국어 제안서 파일 분리 업로드 준비
 - 기존 단일 제안서 파일 대신 언어별 HTML/PDF 파일 세트를 사용하는 구조로 정리된 현재 변경사항을 GitHub에 업로드하기 위한 커밋 및 푸시 작업을 준비
 
+## 2026-03-02 18:44 - FAQ형 챗봇 도입 기획안 작성
+- `Docs/chatbot_faq_introduction_plan.md` 문서를 추가해 현재 챗봇 버튼을 유지한 채 FAQ형 패널을 열고 `Business Inquiries`로 연결하는 1차 도입 방향을 초보자 기준으로 정리
+- 자유 입력형 AI 챗봇 대신 안내형 FAQ 챗봇을 먼저 도입하는 이유, 화면 구조, 질문 추천안, 동작 흐름, 1차 제외 범위를 함께 설명
+
+## 2026-03-02 18:47 - FAQ형 챗봇 실행 계획서 작성
+- `Docs/chatbot_faq_execution_plan.md` 문서를 추가해 FAQ 7개 초안, 답변 원칙, 패널 구조, 파일 수정 범위, 구현 순서, 주의사항을 실제 개발 직전 수준으로 정리
+
+## 2026-03-02 18:51 - FAQ형 챗봇 1차 구현
+- `src/components/ChatbotPanel.jsx`를 추가해 FAQ 질문 목록, 답변 카드, 닫기 버튼, `Business Inquiries` 연결 버튼, 제안서 이동 버튼이 있는 소형 챗봇 패널을 구현
+- `src/components/Dashboard.jsx`에서 챗봇 열기/닫기 상태와 언어별 제안서 이동, 문의 모달 연결 흐름을 연결
+- `src/i18n/translations.js`에 `EN`, `ES`, `FR`, `KR` 기준 챗봇 제목, 안내 문구, FAQ 질문 7개, 답변, 버튼 문구를 추가
+- `src/index.css`에 챗봇 패널 레이아웃과 모바일 대응 스타일을 추가하고 `npm run build`로 번들링이 정상 완료되는 것을 확인
+
 ## 2026-03-02 14:52 - 피그마 introduction 프레임에 제안서 콘텐츠 삽입
 - 피그마 채널 o9jh5c1k에 접속하여 `hagobogo_csv_introduction` 프레임(23:210)의 흰색 아웃라인 보드 `introduction`(23:243, 1199x1600) 확인
 - 수정된 제안서의 모든 콘텐츠를 17개 텍스트 노드로 삽입: 제목, 5개 통계 숫자(시안 색상), 5개 통계 설명, 5개 섹션(Problem/Solution/Global Success/Benefits/Strategy), 연락처 푸터
 - 메인 페이지와 동일한 색상 팔레트(회색 #4d545a, 시안 #2BC4E5) 적용
+
+## 2026-03-02 19:02 - GitHub Actions CI/CD 자동 배포 구성
+- GitHub Pages 배포가 이전 내용만 노출되는 문제를 진단: 로컬 `dist/` 빌드 해시(`app-BcXhplzy.js`)와 원격 해시(`app-De1ia2SL.js`)가 불일치하여 최신 빌드가 push되지 않은 것이 원인
+- `.github/workflows/deploy.yml` 워크플로우 파일 생성: `main` 브랜치 push 시 자동으로 `npm ci` → `.env.production` 생성(GitHub Secrets 기반) → `npm run build` → GitHub Pages 배포
+- `.gitignore`에 `dist/` 추가: CI/CD가 자동 빌드하므로 빌드 산출물을 Git 추적에서 제외
+- 대장님이 GitHub 웹에서 해야 할 작업: ① Settings → Pages → Source를 "GitHub Actions"으로 변경 ② Settings → Secrets → `VITE_BUSINESS_INQUIRY_API_URL` 등록
