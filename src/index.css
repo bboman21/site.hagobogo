@@ -788,6 +788,7 @@ body {
   inset: 0;
   z-index: 55;
   pointer-events: none;
+  overscroll-behavior: contain;
 }
 
 .chatbot-panel-backdrop {
@@ -813,6 +814,7 @@ body {
   box-shadow: 0 24px 60px rgba(77, 84, 90, 0.2);
   backdrop-filter: blur(14px);
   overflow: hidden;
+  overscroll-behavior: contain;
   pointer-events: auto;
   animation: fadeIn 220ms ease;
 }
@@ -874,17 +876,23 @@ body {
   flex: 1 1 auto;
   flex-direction: column;
   min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chatbot-panel-question-list {
   display: flex;
-  flex: 1 1 auto;
+  flex: 0 0 auto;
   flex-direction: column;
   gap: 10px;
+  max-height: 250px;
   min-height: 0;
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: rgba(87, 93, 100, 0.38) transparent;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .chatbot-panel-question-list::-webkit-scrollbar {
@@ -1067,9 +1075,9 @@ body {
     left: 16px;
     bottom: 82px;
     width: auto;
-    height: min(430px, calc(100dvh - 118px));
-    max-height: none;
-    padding: 18px 16px 14px;
+    max-height: min(560px, calc(100dvh - 104px));
+    height: auto;
+    padding: 18px 16px 18px;
     border-radius: 24px;
   }
 
@@ -1086,7 +1094,12 @@ body {
     line-height: 1.45;
   }
 
+  .chatbot-panel-body {
+    padding-right: 2px;
+  }
+
   .chatbot-panel-question-list {
+    max-height: min(168px, 24dvh);
     gap: 8px;
     padding-right: 4px;
   }
@@ -1099,6 +1112,7 @@ body {
   .chatbot-answer-card {
     margin-top: 12px;
     padding: 14px;
+    margin-bottom: 2px;
   }
 
   .chatbot-answer-title {

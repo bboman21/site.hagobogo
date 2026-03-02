@@ -21,6 +21,29 @@ export default function ChatbotPanel({ copy, questions = [], onClose, onOpenInqu
         setSelectedQuestionId(null);
     }, [questions]);
 
+    useEffect(() => {
+        const scrollY = window.scrollY;
+        const originalBodyStyle = {
+            overflow: document.body.style.overflow,
+            position: document.body.style.position,
+            top: document.body.style.top,
+            width: document.body.style.width,
+        };
+
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.width = '100%';
+
+        return () => {
+            document.body.style.overflow = originalBodyStyle.overflow;
+            document.body.style.position = originalBodyStyle.position;
+            document.body.style.top = originalBodyStyle.top;
+            document.body.style.width = originalBodyStyle.width;
+            window.scrollTo(0, scrollY);
+        };
+    }, []);
+
     const selectedQuestion = questions.find((question) => question.id === selectedQuestionId) || null;
 
     return (
