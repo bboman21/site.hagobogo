@@ -304,7 +304,7 @@ export default function Dashboard() {
                 {/* 제안서 삽입 영역 (흰색 아웃라인 보드) */}
                 <div ref={proposalBoardRef} className="introduction-board">
                     <iframe
-                        src={`/assets/data/${proposalFileName}`}
+                        src={`${import.meta.env.BASE_URL}assets/data/${proposalFileName}`}
                         title="HAGOBOGO Introduction"
                         className="introduction-iframe"
                     />
