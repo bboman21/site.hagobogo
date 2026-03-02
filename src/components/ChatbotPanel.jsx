@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-export default function ChatbotPanel({ copy, onClose, onOpenInquiry, onViewProposal }) {
+export default function ChatbotPanel({ copy, questions = [], onClose, onOpenInquiry, onViewProposal }) {
     const [selectedQuestionId, setSelectedQuestionId] = useState(null);
 
     useEffect(() => {
@@ -17,7 +17,11 @@ export default function ChatbotPanel({ copy, onClose, onOpenInquiry, onViewPropo
         };
     }, [onClose]);
 
-    const selectedQuestion = copy.questions.find((question) => question.id === selectedQuestionId) || null;
+    useEffect(() => {
+        setSelectedQuestionId(null);
+    }, [questions]);
+
+    const selectedQuestion = questions.find((question) => question.id === selectedQuestionId) || null;
 
     return (
         <div className="chatbot-panel-layer" aria-live="polite">
@@ -44,7 +48,7 @@ export default function ChatbotPanel({ copy, onClose, onOpenInquiry, onViewPropo
                 </div>
 
                 <div className="chatbot-panel-question-list">
-                    {copy.questions.map((question) => (
+                    {questions.map((question) => (
                         <button
                             key={question.id}
                             type="button"

@@ -556,6 +556,22 @@
 ## 2026-03-02 22:12 - Business Inquiries 닫기 버튼 위치 상향
 - `src/index.css`에서 팝업 우상단 닫기 버튼을 기존 위치보다 위와 오른쪽으로 각각 16px 이동시켜 모서리 쪽에 더 가깝게 배치
 
+## 2026-03-02 22:18 - 챗봇 FAQ 데이터 분리 기획안 작성
+- `Docs/chatbot_faq_data_separation_plan.md` 문서를 추가해 챗봇 질문/답변을 별도 파일로 분리하는 목적, 권장 파일 구조, 데이터 전달 방식, 구현 순서, 주의사항을 초보자 기준으로 정리
+- `translations.js`에는 UI 문구만 남기고 FAQ 데이터는 `src/data/chatbotFaq.js`로 분리하는 방향을 권장안으로 제시
+
+## 2026-03-02 22:23 - 챗봇 FAQ 데이터 파일 분리 구현
+- `src/data/chatbotFaq.js` 파일을 추가해 `EN`, `ES`, `FR`, `KR` 언어별 질문/답변 데이터를 별도 파일로 분리
+- `src/i18n/translations.js`에서는 챗봇 UI 문구만 남기고 `chatbotPanel.questions` 배열을 제거해 번역 파일 책임을 정리
+- `src/components/Dashboard.jsx`에서 현재 언어 기준 FAQ 데이터를 읽어 `ChatbotPanel`로 전달하고, `src/components/ChatbotPanel.jsx`는 전달받은 `questions`만 렌더링하도록 수정
+
+## 2026-03-02 22:29 - 챗봇 닫기 버튼 스타일 통일
+- `src/index.css`에서 챗봇 패널 닫기 버튼을 `Business Inquiries` 팝업 닫기 버튼과 같은 계열의 투명 배경, 회색 아이콘, 옅은 호버 배경 스타일로 조정
+- 기존 원형 배경이 항상 보이던 형태를 제거해 두 닫기 버튼의 시각 톤이 서로 일치하도록 정리
+
+## 2026-03-02 22:32 - 챗봇 닫기 버튼 위치 상향
+- `src/index.css`에서 챗봇 패널 닫기 버튼을 기존 위치보다 위와 오른쪽으로 각각 24px 이동시켜 패널 우상단 쪽에 더 가깝게 배치
+
 ## 2026-03-02 14:52 - 피그마 introduction 프레임에 제안서 콘텐츠 삽입
 - 피그마 채널 o9jh5c1k에 접속하여 `hagobogo_csv_introduction` 프레임(23:210)의 흰색 아웃라인 보드 `introduction`(23:243, 1199x1600) 확인
 - 수정된 제안서의 모든 콘텐츠를 17개 텍스트 노드로 삽입: 제목, 5개 통계 숫자(시안 색상), 5개 통계 설명, 5개 섹션(Problem/Solution/Global Success/Benefits/Strategy), 연락처 푸터

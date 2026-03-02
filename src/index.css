@@ -839,14 +839,19 @@ body {
 }
 
 .chatbot-panel-close {
-  min-width: 32px;
-  min-height: 32px;
-  border: none;
+  position: relative;
+  top: -24px;
+  right: -24px;
+  flex-shrink: 0;
+  width: 60px;
+  height: 60px;
+  border: 0;
   border-radius: 999px;
-  background: rgba(77, 84, 90, 0.08);
-  color: #4d545a;
+  background: transparent;
+  color: #7f878f;
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 24px;
+  font-size: 48px;
+  font-weight: 300;
   line-height: 1;
   cursor: pointer;
   transition: background-color 180ms ease, color 180ms ease;
@@ -854,8 +859,8 @@ body {
 
 .chatbot-panel-close:hover,
 .chatbot-panel-close:focus-visible {
-  background: #4d545a;
-  color: #ffffff;
+  background: rgba(87, 93, 100, 0.12);
+  color: #575d64;
   outline: none;
 }
 

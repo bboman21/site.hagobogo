@@ -8,6 +8,7 @@ import ChatbotPanel from './ChatbotPanel';
 import logoHagobogo from '../../assets/svg/logo_haogobogo.svg';
 import chatbotLeo from '../../assets/svg/btn_chatbot.svg';
 import { DEFAULT_LANGUAGE, LANGUAGE_OPTIONS, TRANSLATIONS } from '../i18n/translations';
+import { CHATBOT_FAQ } from '../data/chatbotFaq';
 
 const SALES_STORAGE_KEY = 'sphere_count';
 const LANGUAGE_STORAGE_KEY = 'site_language';
@@ -182,6 +183,7 @@ export default function Dashboard() {
     }, []);
 
     const copy = TRANSLATIONS[language];
+    const chatbotQuestions = CHATBOT_FAQ[language] || CHATBOT_FAQ.EN || [];
     const proposalFileName = PROPOSAL_FILE_BY_LANGUAGE[language] || PROPOSAL_FILE_BY_LANGUAGE.EN;
 
     return (
@@ -197,6 +199,7 @@ export default function Dashboard() {
             {isChatbotOpen && (
                 <ChatbotPanel
                     copy={copy.chatbotPanel}
+                    questions={chatbotQuestions}
                     onClose={() => setIsChatbotOpen(false)}
                     onOpenInquiry={handleOpenInquiryModal}
                     onViewProposal={handleViewProposal}
