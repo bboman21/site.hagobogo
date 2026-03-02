@@ -802,13 +802,17 @@ body {
   position: absolute;
   right: 28px;
   bottom: 104px;
+  display: flex;
+  flex-direction: column;
   width: min(360px, calc(100vw - 32px));
+  max-height: min(620px, calc(100dvh - 144px));
   padding: 22px 20px 18px;
   border: 1px solid rgba(77, 84, 90, 0.14);
   border-radius: 28px;
   background: rgba(244, 246, 248, 0.96);
   box-shadow: 0 24px 60px rgba(77, 84, 90, 0.2);
   backdrop-filter: blur(14px);
+  overflow: hidden;
   pointer-events: auto;
   animation: fadeIn 220ms ease;
 }
@@ -819,6 +823,7 @@ body {
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 18px;
+  flex-shrink: 0;
 }
 
 .chatbot-panel-title {
@@ -864,10 +869,37 @@ body {
   outline: none;
 }
 
+.chatbot-panel-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
 .chatbot-panel-question-list {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 10px;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(87, 93, 100, 0.38) transparent;
+}
+
+.chatbot-panel-question-list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.chatbot-panel-question-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatbot-panel-question-list::-webkit-scrollbar-thumb {
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: rgba(87, 93, 100, 0.38);
+  background-clip: padding-box;
 }
 
 .chatbot-question-chip {
@@ -901,6 +933,7 @@ body {
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(77, 84, 90, 0.1);
+  flex-shrink: 0;
 }
 
 .chatbot-answer-label {
@@ -1034,12 +1067,38 @@ body {
     left: 16px;
     bottom: 82px;
     width: auto;
-    padding: 18px 16px 16px;
+    height: min(430px, calc(100dvh - 118px));
+    max-height: none;
+    padding: 18px 16px 14px;
     border-radius: 24px;
   }
 
   .chatbot-panel-title {
     font-size: 24px;
+  }
+
+  .chatbot-panel-header {
+    margin-bottom: 14px;
+  }
+
+  .chatbot-panel-intro {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .chatbot-panel-question-list {
+    gap: 8px;
+    padding-right: 4px;
+  }
+
+  .chatbot-question-chip {
+    padding: 11px 13px;
+    font-size: 13px;
+  }
+
+  .chatbot-answer-card {
+    margin-top: 12px;
+    padding: 14px;
   }
 
   .chatbot-answer-title {

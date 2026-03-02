@@ -47,55 +47,57 @@ export default function ChatbotPanel({ copy, questions = [], onClose, onOpenInqu
                     </button>
                 </div>
 
-                <div className="chatbot-panel-question-list">
-                    {questions.map((question) => (
-                        <button
-                            key={question.id}
-                            type="button"
-                            className={`chatbot-question-chip ${selectedQuestionId === question.id ? 'is-active' : ''}`}
-                            onClick={() => setSelectedQuestionId(question.id)}
-                        >
-                            {question.question}
-                        </button>
-                    ))}
-                </div>
+                <div className="chatbot-panel-body">
+                    <div className="chatbot-panel-question-list">
+                        {questions.map((question) => (
+                            <button
+                                key={question.id}
+                                type="button"
+                                className={`chatbot-question-chip ${selectedQuestionId === question.id ? 'is-active' : ''}`}
+                                onClick={() => setSelectedQuestionId(question.id)}
+                            >
+                                {question.question}
+                            </button>
+                        ))}
+                    </div>
 
-                <div className="chatbot-answer-card">
-                    {selectedQuestion ? (
-                        <>
-                            <p className="chatbot-answer-label">{copy.labels.answer}</p>
-                            <h3 className="chatbot-answer-title">{selectedQuestion.question}</h3>
-                            <p className="chatbot-answer-body">{selectedQuestion.answer}</p>
-                            <div className="chatbot-answer-actions">
-                                <button
-                                    type="button"
-                                    className="chatbot-primary-action"
-                                    onClick={onOpenInquiry}
-                                >
-                                    {copy.buttons.businessInquiries}
-                                </button>
-                                <button
-                                    type="button"
-                                    className="chatbot-secondary-action"
-                                    onClick={onViewProposal}
-                                >
-                                    {copy.buttons.viewProposal}
-                                </button>
-                                <button
-                                    type="button"
-                                    className="chatbot-reset-action"
-                                    onClick={() => setSelectedQuestionId(null)}
-                                >
-                                    {copy.buttons.otherQuestions}
-                                </button>
+                    <div className="chatbot-answer-card">
+                        {selectedQuestion ? (
+                            <>
+                                <p className="chatbot-answer-label">{copy.labels.answer}</p>
+                                <h3 className="chatbot-answer-title">{selectedQuestion.question}</h3>
+                                <p className="chatbot-answer-body">{selectedQuestion.answer}</p>
+                                <div className="chatbot-answer-actions">
+                                    <button
+                                        type="button"
+                                        className="chatbot-primary-action"
+                                        onClick={onOpenInquiry}
+                                    >
+                                        {copy.buttons.businessInquiries}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="chatbot-secondary-action"
+                                        onClick={onViewProposal}
+                                    >
+                                        {copy.buttons.viewProposal}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className="chatbot-reset-action"
+                                        onClick={() => setSelectedQuestionId(null)}
+                                    >
+                                        {copy.buttons.otherQuestions}
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="chatbot-empty-state">
+                                <p className="chatbot-answer-label">{copy.labels.recommended}</p>
+                                <p className="chatbot-empty-copy">{copy.emptyState}</p>
                             </div>
-                        </>
-                    ) : (
-                        <div className="chatbot-empty-state">
-                            <p className="chatbot-answer-label">{copy.labels.recommended}</p>
-                            <p className="chatbot-empty-copy">{copy.emptyState}</p>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </section>
         </div>
