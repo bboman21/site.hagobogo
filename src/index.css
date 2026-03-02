@@ -680,8 +680,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 90px;
-  height: 90px;
+  width: 63px;
+  height: 63px;
   padding: 0;
   border: none;
   border-radius: 50%;
@@ -706,8 +706,8 @@ body {
 }
 
 .chatbot-fab-icon {
-  width: 90px;
-  height: 90px;
+  width: 63px;
+  height: 63px;
   object-fit: contain;
   pointer-events: none;
   filter: drop-shadow(0 4px 12px rgba(77, 84, 90, 0.22));
@@ -717,13 +717,13 @@ body {
   .chatbot-fab {
     right: 18px;
     bottom: 18px;
-    width: 72px;
-    height: 72px;
+    width: 50px;
+    height: 50px;
   }
 
   .chatbot-fab-icon {
-    width: 62px;
-    height: 62px;
+    width: 43px;
+    height: 43px;
   }
 }
 
