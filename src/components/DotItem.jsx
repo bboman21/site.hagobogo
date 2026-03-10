@@ -12,6 +12,8 @@ export default function DotItem({
     headImage = dotHead,
     alt = 'dot',
     headSize = 44,
+    tailThickness = 4,
+    tailGlow = 'drop-shadow(0 0 4px rgba(255,255,255,0.28))',
 }) {
     return (
         <div
@@ -28,11 +30,11 @@ export default function DotItem({
                 className="absolute top-0 left-0"
                 style={{
                     width: `${tailLength}px`,
-                    height: '4px',
-                    transform: `translate(${-tailLength}px, -2px)`,
+                    height: `${tailThickness}px`,
+                    transform: `translate(${-tailLength}px, ${-tailThickness / 2}px)`,
                     background: 'linear-gradient(to left, rgba(255,255,255,0.96) 0%, rgba(255,255,255,0) 65%)',
                     transformOrigin: '100% 50%',
-                    filter: 'drop-shadow(0 0 4px rgba(255,255,255,0.28))',
+                    filter: tailGlow,
                 }}
             />
 

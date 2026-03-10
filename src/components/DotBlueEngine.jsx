@@ -6,7 +6,10 @@ import DotItem from './DotItem';
 const COLLISION_FADE_DURATION_MS = 1000;
 
 export default function DotBlueEngine({ onHit, targetCenter, collisionRadius }) {
-    const dots = useDotEngine(onHit, collisionRadius);
+    const dots = useDotEngine(onHit, collisionRadius, {
+        speedMultiplier: 0.5,
+        accelerationGainPerStep: 1.05,
+    });
 
     return (
         <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
@@ -17,7 +20,7 @@ export default function DotBlueEngine({ onHit, targetCenter, collisionRadius }) 
                 // Dot이 중심을 향하도록 기존 회전 계산을 그대로 유지합니다.
                 const rotation = (dot.angle * 180) / Math.PI + 180;
                 const progress = (dot.distance - collisionRadius) / (dot.initialDistance - collisionRadius);
-                const currentScale = 0.3 + 0.7 * Math.max(0, progress);
+                const currentScale = 0.1 + 0.9 * Math.max(0, progress);
                 const opacity = dot.collidedAt == null
                     ? 1
                     : Math.max(0, 1 - (performance.now() - dot.collidedAt) / COLLISION_FADE_DURATION_MS);
@@ -33,7 +36,9 @@ export default function DotBlueEngine({ onHit, targetCenter, collisionRadius }) 
                         opacity={opacity}
                         headImage={dotHeadBlue}
                         alt="blue dot"
-                        headSize={88}
+                        headSize={120}
+                        tailThickness={12}
+                        tailGlow="drop-shadow(0 0 8px rgba(43,196,229,0.4))"
                     />
                 );
             })}

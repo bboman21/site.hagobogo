@@ -16,7 +16,7 @@ export default function DotEngine({ targetCenter, collisionRadius }) {
                 // Dot이 중심을 향해야 하므로 회전값은 180도 추가
                 const rotation = (dot.angle * 180) / Math.PI + 180;
                 const progress = (dot.distance - collisionRadius) / (dot.initialDistance - collisionRadius);
-                const currentScale = 0.3 + 0.7 * Math.max(0, progress);
+                const currentScale = 0.1 + 0.9 * Math.max(0, progress);
                 const opacity = dot.collidedAt == null
                     ? 1
                     : Math.max(0, 1 - (performance.now() - dot.collidedAt) / COLLISION_FADE_DURATION_MS);

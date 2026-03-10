@@ -10,6 +10,9 @@ const BOUNCE_ZONE_MIN_RADIUS_RATIO = 0.6;
 const BOUNCE_ZONE_MAX_RADIUS_RATIO = 0.75;
 const POST_BOUNCE_ACCELERATION_MULTIPLIER = 2;
 const POST_BOUNCE_DECELERATION_DURATION_MS = 3000;
+const MIN_SCALE_RATIO_NEAR_SPHERE = 0.1;
+const DOT_EMPTY_SPEED_MULTIPLIER = 0.7;
+const SCALE_EFFECT_RADIUS_RATIO = 2.2;
 
 export default function useDotEmptyEngine(targetCenter, sphereRadius) {
     const [dots, setDots] = useState([]);
@@ -24,6 +27,7 @@ export default function useDotEmptyEngine(targetCenter, sphereRadius) {
             const viewportRadius = Math.hypot(window.innerWidth, window.innerHeight) / 2;
             const bounceZoneMinRadius = sphereRadius * BOUNCE_ZONE_MIN_RADIUS_RATIO;
             const bounceZoneMaxRadius = sphereRadius * BOUNCE_ZONE_MAX_RADIUS_RATIO;
+            const scaleEffectStartRadius = sphereRadius * SCALE_EFFECT_RADIUS_RATIO;
 
             const nextDots = [];
             for (const dot of dotsRef.current) {
@@ -35,11 +39,19 @@ export default function useDotEmptyEngine(targetCenter, sphereRadius) {
                         POST_BOUNCE_ACCELERATION_MULTIPLIER -
                             ((POST_BOUNCE_ACCELERATION_MULTIPLIER - 1) * bounceElapsed) / POST_BOUNCE_DECELERATION_DURATION_MS
                     );
-                const nextX = dot.x + dot.vx * speedMultiplier * (deltaTime / 1000);
-                const nextY = dot.y + dot.vy * speedMultiplier * (deltaTime / 1000);
+                const nextX = dot.x + dot.vx * speedMultiplier * DOT_EMPTY_SPEED_MULTIPLIER * (deltaTime / 1000);
+                const nextY = dot.y + dot.vy * speedMultiplier * DOT_EMPTY_SPEED_MULTIPLIER * (deltaTime / 1000);
                 const dx = nextX - targetCenter.x;
                 const dy = nextY - targetCenter.y;
                 const nextDistance = Math.hypot(dx, dy);
+                const scaleProgress = Math.max(
+                    0,
+                    Math.min(
+                        1,
+                        (scaleEffectStartRadius - nextDistance) / Math.max(1, scaleEffectStartRadius - bounceZoneMinRadius)
+                    )
+                );
+                const nextScale = dot.baseScale * (1 - ((1 - MIN_SCALE_RATIO_NEAR_SPHERE) * scaleProgress));
 
                 if (
                     !dot.outbound &&
@@ -59,6 +71,7 @@ export default function useDotEmptyEngine(targetCenter, sphereRadius) {
                         y: targetCenter.y + Math.sin(surfaceAngle) * nextDistance,
                         vx: Math.cos(outboundAngle) * dot.speed,
                         vy: Math.sin(outboundAngle) * dot.speed,
+                        scale: nextScale,
                         outbound: true,
                         bounceStartedAt: time,
                     });
@@ -73,6 +86,7 @@ export default function useDotEmptyEngine(targetCenter, sphereRadius) {
                             ...dot,
                             x: nextX,
                             y: nextY,
+                            scale: nextScale,
                             outOfFrameAt: time,
                         });
                     } else if (time - dot.outOfFrameAt < OUT_OF_FRAME_DELETE_DELAY_MS) {
@@ -80,6 +94,7 @@ export default function useDotEmptyEngine(targetCenter, sphereRadius) {
                             ...dot,
                             x: nextX,
                             y: nextY,
+                            scale: nextScale,
                         });
                     }
                 } else {
@@ -87,6 +102,7 @@ export default function useDotEmptyEngine(targetCenter, sphereRadius) {
                         ...dot,
                         x: nextX,
                         y: nextY,
+                        scale: nextScale,
                         outOfFrameAt: null,
                     });
                 }
@@ -116,6 +132,7 @@ export default function useDotEmptyEngine(targetCenter, sphereRadius) {
                     vx: -Math.cos(angle) * speed,
                     vy: -Math.sin(angle) * speed,
                     speed,
+                    baseScale: scale,
                     scale,
                     opacity,
                     outbound: false,

@@ -9,13 +9,15 @@ const ACCELERATION_GAIN_PER_STEP = 1.1;
 const MIN_SPAWN_DELAY_MS = 1000;
 const MAX_SPAWN_DELAY_MS = 4000;
 
-export default function useDotEngine(onHit, collisionRadius) {
+export default function useDotEngine(onHit, collisionRadius, options = {}) {
     const [dots, setDots] = useState([]);
     const requestRef = useRef();
     const dotsRef = useRef([]); // RAF 내부에서 오래된 상태를 참조하지 않도록 유지
     const lastTimeRef = useRef();
     const spawnTimerRef = useRef(0);
     const onHitRef = useRef(onHit);
+    const speedMultiplier = options.speedMultiplier ?? 1;
+    const accelerationGainPerStep = options.accelerationGainPerStep ?? ACCELERATION_GAIN_PER_STEP;
 
     // 최신 onHit 함수를 항상 참조하도록 동기화
     useEffect(() => {
@@ -43,10 +45,10 @@ export default function useDotEngine(onHit, collisionRadius) {
                     ? dot.timeInAccelerationZone + deltaTime
                     : 0;
                 const accelerationMultiplier = Math.pow(
-                    ACCELERATION_GAIN_PER_STEP,
+                    accelerationGainPerStep,
                     timeInAccelerationZone / ACCELERATION_STEP_MS
                 );
-                const currentSpeed = dot.speed * accelerationMultiplier;
+                const currentSpeed = dot.speed * accelerationMultiplier * speedMultiplier;
                 const moveDist = currentSpeed * (deltaTime / 1000);
                 const newDistance = dot.distance - moveDist;
 
@@ -99,7 +101,7 @@ export default function useDotEngine(onHit, collisionRadius) {
 
         lastTimeRef.current = time;
         requestRef.current = requestAnimationFrame(updateDots);
-    }, [collisionRadius]);
+    }, [accelerationGainPerStep, collisionRadius, speedMultiplier]);
 
     useEffect(() => {
         // 첫 생성도 동일한 기준을 적용해 전체 발생 빈도가 1분당 5~10개 수준으로 유지되도록 설정
