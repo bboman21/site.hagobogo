@@ -71,6 +71,13 @@ export default function Dashboard() {
     const sphereGroupRef = useRef(null);
     const languageMenuRef = useRef(null);
     const proposalBoardRef = useRef(null);
+    const proposalIframeRef = useRef(null);
+    const proposalResizeObserverRef = useRef(null);
+    const proposalResizeRafRef = useRef(null);
+    const [proposalFrameHeight, setProposalFrameHeight] = useState(1180);
+    const copy = TRANSLATIONS[language];
+    const chatbotQuestions = CHATBOT_FAQ[language] || CHATBOT_FAQ.EN || [];
+    const proposalFileName = PROPOSAL_FILE_BY_LANGUAGE[language] || PROPOSAL_FILE_BY_LANGUAGE.EN;
 
     useEffect(() => {
         return () => {
@@ -112,6 +119,95 @@ export default function Dashboard() {
             window.removeEventListener('mousedown', handlePointerDown);
         };
     }, []);
+
+    const updateProposalFrameHeight = useCallback(() => {
+        const iframe = proposalIframeRef.current;
+        const iframeDocument = iframe?.contentWindow?.document;
+
+        if (!iframeDocument) {
+            return;
+        }
+
+        // 이전에 커진 iframe 높이가 다시 측정값에 섞이지 않도록 잠시 접은 뒤 실제 문서 높이를 읽음
+        const previousInlineHeight = iframe.style.height;
+        iframe.style.height = '0px';
+
+        const nextHeight = Math.max(
+            iframeDocument.documentElement?.scrollHeight || 0,
+            iframeDocument.body?.scrollHeight || 0
+        );
+
+        iframe.style.height = previousInlineHeight;
+
+        if (nextHeight > 0) {
+            setProposalFrameHeight(nextHeight);
+        }
+    }, []);
+
+    useEffect(() => {
+        return () => {
+            proposalResizeObserverRef.current?.disconnect();
+            if (proposalResizeRafRef.current) {
+                window.cancelAnimationFrame(proposalResizeRafRef.current);
+            }
+        };
+    }, []);
+
+    useEffect(() => {
+        const iframe = proposalIframeRef.current;
+
+        if (!iframe) {
+            return;
+        }
+
+        const connectResizeObserver = () => {
+            proposalResizeObserverRef.current?.disconnect();
+
+            const iframeDocument = iframe.contentWindow?.document;
+            if (!iframeDocument?.body) {
+                return;
+            }
+
+            updateProposalFrameHeight();
+
+            proposalResizeObserverRef.current = new ResizeObserver(() => {
+                updateProposalFrameHeight();
+            });
+            proposalResizeObserverRef.current.observe(iframeDocument.body);
+            proposalResizeObserverRef.current.observe(iframeDocument.documentElement);
+        };
+
+        const handleLoad = () => {
+            connectResizeObserver();
+            window.requestAnimationFrame(updateProposalFrameHeight);
+            window.setTimeout(updateProposalFrameHeight, 150);
+            window.setTimeout(updateProposalFrameHeight, 450);
+        };
+
+        const handleWindowResize = () => {
+            if (proposalResizeRafRef.current) {
+                window.cancelAnimationFrame(proposalResizeRafRef.current);
+            }
+
+            proposalResizeRafRef.current = window.requestAnimationFrame(() => {
+                updateProposalFrameHeight();
+            });
+        };
+
+        iframe.addEventListener('load', handleLoad);
+        window.addEventListener('resize', handleWindowResize);
+
+        handleLoad();
+
+        return () => {
+            iframe.removeEventListener('load', handleLoad);
+            window.removeEventListener('resize', handleWindowResize);
+            proposalResizeObserverRef.current?.disconnect();
+            if (proposalResizeRafRef.current) {
+                window.cancelAnimationFrame(proposalResizeRafRef.current);
+            }
+        };
+    }, [proposalFileName, updateProposalFrameHeight]);
 
     useEffect(() => {
         const updateTargetMetrics = () => {
@@ -181,10 +277,6 @@ export default function Dashboard() {
             block: 'center',
         });
     }, []);
-
-    const copy = TRANSLATIONS[language];
-    const chatbotQuestions = CHATBOT_FAQ[language] || CHATBOT_FAQ.EN || [];
-    const proposalFileName = PROPOSAL_FILE_BY_LANGUAGE[language] || PROPOSAL_FILE_BY_LANGUAGE.EN;
 
     return (
         <div className={`relative w-full min-h-screen flex justify-center overflow-x-hidden bg-[#bfc5cc] text-[#bfc5cc] ${language === 'KR' ? 'lang-kr' : ''}`}>
@@ -298,15 +390,28 @@ export default function Dashboard() {
                 <div ref={sphereGroupRef} className="relative flex items-center justify-center px-[20px] pt-[20px] pb-[20px] pointer-events-none">
                     <Sphere isLineHit={isLineHit} />
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <SalesCounter sales={sales} isPulsing={isPulsing} mode="center" />
+                        <SalesCounter sales={sales} isPulsing={isPulsing} mode="center" copy={copy.salesCounter} />
                     </div>
                 </div>
 
-                <SalesCounter sales={sales} isPulsing={isPulsing} mode="bottom" copy={copy.salesCounter} />
+                <div className="mt-[12px] flex flex-col items-center">
+                    <button
+                        type="button"
+                        className="text-cta text-cta-unified"
+                        onClick={handleOpenInquiryModal}
+                    >
+                        {copy.ctas.businessInquiries}
+                    </button>
+                </div>
 
                 {/* 제안서 삽입 영역 (흰색 아웃라인 보드) */}
-                <div ref={proposalBoardRef} className="introduction-board">
+                <div
+                    ref={proposalBoardRef}
+                    className="introduction-board"
+                    style={{ height: `${proposalFrameHeight}px` }}
+                >
                     <iframe
+                        ref={proposalIframeRef}
                         src={`${import.meta.env.BASE_URL}assets/data/${proposalFileName}`}
                         title="HAGOBOGO Introduction"
                         className="introduction-iframe"

@@ -5,8 +5,8 @@ export const LANGUAGE_OPTIONS = ['EN', 'ES', 'FR', 'KR'];
 export const TRANSLATIONS = {
     EN: {
         salesCounter: {
-            titleEmphasis: 'HAGOBOGO',
-            titleText: 'Cumulative Sales Volume',
+            titleLineTop: 'HAGOBOGO & HAGOBOGO PRO',
+            titleLineBottom: 'Cumulative Sales Volume',
             sinceText: 'Since 2025',
         },
         ctas: {
@@ -74,8 +74,8 @@ export const TRANSLATIONS = {
     },
     ES: {
         salesCounter: {
-            titleEmphasis: 'HAGOBOGO',
-            titleText: 'Volumen Acumulado de Ventas',
+            titleLineTop: 'HAGOBOGO & HAGOBOGO PRO',
+            titleLineBottom: 'Volumen Acumulado de Ventas',
             sinceText: 'Desde 2025',
         },
         ctas: {
@@ -143,8 +143,8 @@ export const TRANSLATIONS = {
     },
     FR: {
         salesCounter: {
-            titleEmphasis: 'HAGOBOGO',
-            titleText: 'Volume de Ventes Cumulées',
+            titleLineTop: 'HAGOBOGO & HAGOBOGO PRO',
+            titleLineBottom: 'Volume de Ventes Cumulées',
             sinceText: 'Depuis 2025',
         },
         ctas: {
@@ -212,8 +212,8 @@ export const TRANSLATIONS = {
     },
     KR: {
         salesCounter: {
-            titleEmphasis: 'HAGOBOGO',
-            titleText: '누적 판매량',
+            titleLineTop: 'HAGOBOGO & HAGOBOGO PRO',
+            titleLineBottom: '누적 판매량',
             sinceText: '2025년부터',
         },
         ctas: {

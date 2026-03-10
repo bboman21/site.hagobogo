@@ -48,7 +48,32 @@
     .note { font-style: italic; color: var(--text-secondary); font-size: 8pt; text-align: right; }
     .footer-contact { display: none; }
     .footer-actions .note { display: none; }
-    @media (max-width: 400px) { .stat-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 767px) {
+      body { max-width: none; padding: 20px 16px 24px; font-size: 9pt; }
+      header { margin-bottom: 12px; padding-bottom: 8px; }
+      h1 { font-size: 18pt; line-height: 1.1; }
+      h2 { font-size: 11pt; margin-bottom: 6px; }
+      section { margin-bottom: 10px; }
+      .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+      .stat-card { padding: 10px 6px; }
+      .stat-number { font-size: 24pt; }
+      .stat-desc { font-size: 7.4pt; }
+      table { font-size: 8.2pt; }
+      th, td { padding: 6px; overflow-wrap: anywhere; }
+      th { font-size: 9pt; }
+      .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 6px; }
+      .grid-2-item, .benefit-box { padding: 8px; }
+      .grid-2-item strong, .benefit-title, .stage-label { font-size: 10pt; }
+      .grid-2-item span, .benefit-desc, .problem-text { font-size: 8.3pt; }
+      .footer-actions { margin-top: 12px; }
+      .download-button { width: 100%; min-height: 36px; font-size: 10pt; }
+    }
+    @media (max-width: 520px) {
+      body { padding: 18px 12px 20px; }
+      h1 { font-size: 16pt; }
+      .stat-grid { grid-template-columns: 1fr; }
+      .stat-number { font-size: 22pt; }
+    }
     @page { margin: 0; size: A4; }
     @media print { body { background: white !important; } .download-button { display: none; } }
   </style>

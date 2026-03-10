@@ -99,7 +99,7 @@ body {
 }
 
 .text-cta-unified {
-  font-size: 40px;
+  font-size: 30px;
   font-weight: 300;
   border: 1px solid #4d545a;
   border-radius: 999px;
@@ -135,6 +135,27 @@ body {
 .sales-counter-copy-group {
   position: relative;
   top: -20px;
+}
+
+.sales-counter-center-copy-group {
+  margin-top: 10px;
+  gap: 4px;
+  color: #d1d6dc;
+}
+
+.sales-counter-center-copy-title,
+.sales-counter-center-copy-subtitle {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 400;
+}
+
+.sales-counter-center-copy-title {
+  font-size: clamp(20px, 4.6vw, 27px);
+}
+
+.sales-counter-center-copy-subtitle {
+  font-size: clamp(16px, 3.2vw, 18px);
+  opacity: 0.96;
 }
 
 .text-nav-cta {
@@ -286,7 +307,7 @@ body {
 .inquiry-field-label {
   color: #9098a0;
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 400;
   line-height: 1;
 }
@@ -573,7 +594,18 @@ body {
   }
 
   .text-cta-unified {
-    font-size: 32px;
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .sales-counter-center-copy-title {
+    font-size: 18px;
+    letter-spacing: -0.02em;
+  }
+
+  .sales-counter-center-copy-subtitle {
+    font-size: 14px;
   }
 }
 
@@ -582,8 +614,12 @@ body {
     font-size: 64px;
   }
 
+  .sales-counter-center-copy-group {
+    margin-top: 8px;
+  }
+
   .text-cta-unified {
-    font-size: 24px;
+    font-size: 18px;
   }
 }
 
@@ -627,6 +663,8 @@ body {
 .lang-kr .news-ticker-text,
 .lang-kr .site-footer,
 .lang-kr .sales-counter-value,
+.lang-kr .sales-counter-center-copy-title,
+.lang-kr .sales-counter-center-copy-subtitle,
 .lang-kr .sales-counter-copy-title,
 .lang-kr .sales-counter-copy-subtitle {
   font-family: 'Pretendard', sans-serif;
@@ -639,6 +677,10 @@ body {
 }
 
 .lang-kr .sphere_count {
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+.lang-kr .sales-counter-copy-title-top {
   font-family: 'Barlow Condensed', sans-serif;
 }
 
@@ -1142,9 +1184,8 @@ body {
 .introduction-board {
   width: 90%;
   max-width: 900px;
-  aspect-ratio: 210 / 275;
-  /* A4 비율 */
-  margin: 60px auto 0;
+  min-height: 880px;
+  margin: 18px auto 0;
   /* border: 1px solid rgba(255, 255, 255, 0.5); */
   border-radius: 24px;
   overflow: hidden;
@@ -1162,7 +1203,8 @@ body {
 @media (max-width: 640px) {
   .introduction-board {
     width: 95%;
-    margin-top: 40px;
+    min-height: 620px;
+    margin-top: 12px;
     border-radius: 16px;
   }
 

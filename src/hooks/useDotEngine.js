@@ -6,8 +6,8 @@ const COLLISION_FADE_DURATION_MS = 1000;
 const ACCELERATION_THRESHOLD_MULTIPLIER = 1.5;
 const ACCELERATION_STEP_MS = 200;
 const ACCELERATION_GAIN_PER_STEP = 1.1;
-const MIN_SPAWN_DELAY_MS = 6000;
-const MAX_SPAWN_DELAY_MS = 12000;
+const MIN_SPAWN_DELAY_MS = 1000;
+const MAX_SPAWN_DELAY_MS = 4000;
 
 export default function useDotEngine(onHit, collisionRadius) {
     const [dots, setDots] = useState([]);
