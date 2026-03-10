@@ -1,8 +1,18 @@
 import React from 'react';
 import dotHead from '../../assets/svg/dot_head.svg';
 
-// DotItem은 전달받은 x, y 와 회전 각도, scale, 꼬리 길이에 따라 위치와 크기가 결정됩니다.
-export default function DotItem({ x, y, rotation, scale, tailLength, opacity }) {
+// DotItem은 전달받은 x, y 와 회전 각도, scale, 꼬리 길이, 머리 SVG 크기에 따라 위치와 크기가 결정됩니다.
+export default function DotItem({
+    x,
+    y,
+    rotation,
+    scale,
+    tailLength,
+    opacity,
+    headImage = dotHead,
+    alt = 'dot',
+    headSize = 44,
+}) {
     return (
         <div
             className="absolute top-0 left-0"
@@ -26,10 +36,17 @@ export default function DotItem({ x, y, rotation, scale, tailLength, opacity }) 
                 }}
             />
 
-            <div className="absolute top-0 left-0 w-[44px] h-[44px]" style={{ transform: 'translate(-22px, -22px)' }}>
+            <div
+                className="absolute top-0 left-0"
+                style={{
+                    width: `${headSize}px`,
+                    height: `${headSize}px`,
+                    transform: `translate(${-headSize / 2}px, ${-headSize / 2}px)`,
+                }}
+            >
                 <img
-                    src={dotHead}
-                    alt="dot"
+                    src={headImage}
+                    alt={alt}
                     className="w-full h-full object-contain"
                 />
             </div>

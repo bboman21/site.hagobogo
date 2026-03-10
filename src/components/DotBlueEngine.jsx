@@ -1,11 +1,12 @@
 import React from 'react';
+import dotHeadBlue from '../../assets/svg/dot_head_blue.svg';
 import useDotEngine from '../hooks/useDotEngine';
 import DotItem from './DotItem';
 
 const COLLISION_FADE_DURATION_MS = 1000;
 
-export default function DotEngine({ targetCenter, collisionRadius }) {
-    const dots = useDotEngine(undefined, collisionRadius);
+export default function DotBlueEngine({ onHit, targetCenter, collisionRadius }) {
+    const dots = useDotEngine(onHit, collisionRadius);
 
     return (
         <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden">
@@ -13,7 +14,7 @@ export default function DotEngine({ targetCenter, collisionRadius }) {
                 const startX = targetCenter.x + Math.cos(dot.angle) * dot.distance;
                 const startY = targetCenter.y + Math.sin(dot.angle) * dot.distance;
 
-                // Dot이 중심을 향해야 하므로 회전값은 180도 추가
+                // Dot이 중심을 향하도록 기존 회전 계산을 그대로 유지합니다.
                 const rotation = (dot.angle * 180) / Math.PI + 180;
                 const progress = (dot.distance - collisionRadius) / (dot.initialDistance - collisionRadius);
                 const currentScale = 0.3 + 0.7 * Math.max(0, progress);
@@ -30,6 +31,9 @@ export default function DotEngine({ targetCenter, collisionRadius }) {
                         scale={currentScale}
                         tailLength={dot.tailLength}
                         opacity={opacity}
+                        headImage={dotHeadBlue}
+                        alt="blue dot"
+                        headSize={88}
                     />
                 );
             })}

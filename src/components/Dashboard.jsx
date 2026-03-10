@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Sphere from './Sphere';
 import SalesCounter from './SalesCounter';
 import DotEngine from './DotEngine';
+import DotBlueEngine from './DotBlueEngine';
 import DotEmptyEngine from './DotEmptyEngine';
 import InquiryModal from './InquiryModal';
 import ChatbotPanel from './ChatbotPanel';
@@ -305,6 +306,10 @@ export default function Dashboard() {
                     sphereRadius={targetMetrics.sphereRadius}
                 />
                 <DotEngine
+                    targetCenter={targetMetrics.center}
+                    collisionRadius={targetMetrics.collisionRadius}
+                />
+                <DotBlueEngine
                     onHit={handleHit}
                     targetCenter={targetMetrics.center}
                     collisionRadius={targetMetrics.collisionRadius}
