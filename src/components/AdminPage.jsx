@@ -55,6 +55,26 @@ export default function AdminPage() {
     const [notificationEmailInput, setNotificationEmailInput] = useState('');
     const [notificationEmailMessage, setNotificationEmailMessage] = useState('');
     const [isLoadingNotificationEmail, setIsLoadingNotificationEmail] = useState(false);
+    const parsedDotBlueFrequencyMin = parseNumericInput(dotBlueFrequencyMinInput);
+    const parsedDotBlueFrequencyMax = parseNumericInput(dotBlueFrequencyMaxInput);
+    const hasValidDotBlueFrequencyPreview = (
+        Number.isFinite(parsedDotBlueFrequencyMin)
+        && Number.isFinite(parsedDotBlueFrequencyMax)
+        && parsedDotBlueFrequencyMin > 0
+        && parsedDotBlueFrequencyMax > 0
+    );
+    const normalizedDotBlueFrequencyPreview = hasValidDotBlueFrequencyPreview
+        ? {
+            min: Math.min(parsedDotBlueFrequencyMin, parsedDotBlueFrequencyMax),
+            max: Math.max(parsedDotBlueFrequencyMin, parsedDotBlueFrequencyMax),
+        }
+        : null;
+    const dotBlueDailySalesPreview = normalizedDotBlueFrequencyPreview
+        ? {
+            min: normalizedDotBlueFrequencyPreview.min * 24,
+            max: normalizedDotBlueFrequencyPreview.max * 24,
+        }
+        : null;
 
     useEffect(() => {
         setTickerInputs({
@@ -368,6 +388,14 @@ export default function AdminPage() {
                             </div>
                         </label>
 
+                        {dotBlueDailySalesPreview ? (
+                            <p className="admin-frequency-preview">
+                                1일 판매 제품 판매량 예시: {formatNumericInput(dotBlueDailySalesPreview.min)}개
+                                {dotBlueDailySalesPreview.min !== dotBlueDailySalesPreview.max
+                                    ? ` - ${formatNumericInput(dotBlueDailySalesPreview.max)}개`
+                                    : ''}
+                            </p>
+                        ) : null}
                         {dotBlueFrequencyMessage ? <p className={`admin-message${dotBlueFrequencyMessage.includes('정수') ? ' is-error' : ''}`}>{dotBlueFrequencyMessage}</p> : null}
                         <div className="admin-actions admin-actions-center">
                             <button type="submit" className="admin-primary-button">발생 빈도 저장</button>

@@ -931,6 +931,14 @@ body {
   text-align: center;
 }
 
+.admin-frequency-preview {
+  margin: -4px 0 0;
+  color: #4d545a;
+  font-family: 'Pretendard', sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
 .admin-inline-suffix {
   color: #4d545a;
   font-family: 'Barlow Condensed', sans-serif;
