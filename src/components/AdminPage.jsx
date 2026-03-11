@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import AdminTickerEditor from './AdminTickerEditor';
 import logoHagobogo from '../../assets/svg/logo_haogobogo.svg';
-import { fetchAdminNotificationEmail, saveAdminNotificationEmail } from '../lib/adminApi';
 import { TRANSLATIONS } from '../i18n/translations';
 import {
     ADMIN_PASSWORD,
@@ -52,9 +51,6 @@ export default function AdminPage() {
     const [dotBlueFrequencyMinInput, setDotBlueFrequencyMinInput] = useState('');
     const [dotBlueFrequencyMaxInput, setDotBlueFrequencyMaxInput] = useState('');
     const [dotBlueFrequencyMessage, setDotBlueFrequencyMessage] = useState('');
-    const [notificationEmailInput, setNotificationEmailInput] = useState('');
-    const [notificationEmailMessage, setNotificationEmailMessage] = useState('');
-    const [isLoadingNotificationEmail, setIsLoadingNotificationEmail] = useState(false);
     const parsedDotBlueFrequencyMin = parseNumericInput(dotBlueFrequencyMinInput);
     const parsedDotBlueFrequencyMax = parseNumericInput(dotBlueFrequencyMaxInput);
     const hasValidDotBlueFrequencyPreview = (
@@ -88,41 +84,6 @@ export default function AdminPage() {
         setDotBlueFrequencyMinInput(formatNumericInput(dotBlueFrequencyRange.min));
         setDotBlueFrequencyMaxInput(formatNumericInput(dotBlueFrequencyRange.max));
     }, []);
-
-    useEffect(() => {
-        if (!isAuthenticated) {
-            return;
-        }
-
-        let isMounted = true;
-        setIsLoadingNotificationEmail(true);
-        setNotificationEmailMessage('');
-
-        fetchAdminNotificationEmail()
-            .then((notificationEmail) => {
-                if (!isMounted) {
-                    return;
-                }
-
-                setNotificationEmailInput(notificationEmail);
-            })
-            .catch((error) => {
-                if (!isMounted) {
-                    return;
-                }
-
-                setNotificationEmailMessage(error.message || '알림 수신 메일 주소를 불러오지 못했습니다.');
-            })
-            .finally(() => {
-                if (isMounted) {
-                    setIsLoadingNotificationEmail(false);
-                }
-            });
-
-        return () => {
-            isMounted = false;
-        };
-    }, [isAuthenticated]);
 
     const handleAuthenticate = (event) => {
         event.preventDefault();
@@ -192,36 +153,6 @@ export default function AdminPage() {
         setDotBlueFrequencyMessage('Dot_blue 시간당 발생 빈도를 저장했습니다.');
     };
 
-    const handleSaveNotificationEmail = async (event) => {
-        event.preventDefault();
-
-        const trimmedEmail = notificationEmailInput.trim();
-        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-        if (!trimmedEmail) {
-            setNotificationEmailMessage('알림 수신 메일 주소를 입력해 주세요.');
-            return;
-        }
-
-        if (!emailPattern.test(trimmedEmail)) {
-            setNotificationEmailMessage('올바른 이메일 형식으로 입력해 주세요.');
-            return;
-        }
-
-        setIsLoadingNotificationEmail(true);
-        setNotificationEmailMessage('');
-
-        try {
-            const savedEmail = await saveAdminNotificationEmail(trimmedEmail);
-            setNotificationEmailInput(savedEmail);
-            setNotificationEmailMessage('알림 수신 메일 주소를 저장했습니다.');
-        } catch (error) {
-            setNotificationEmailMessage(error.message || '알림 수신 메일 주소 저장에 실패했습니다.');
-        } finally {
-            setIsLoadingNotificationEmail(false);
-        }
-    };
-
     if (!isAuthenticated) {
         return (
             <div className="admin-page min-h-screen px-[20px] py-[32px] text-[#4d545a]">
@@ -241,7 +172,7 @@ export default function AdminPage() {
                             <p className="admin-eyebrow">ADMIN</p>
                             <h1 className="admin-title">관리자 비밀번호를 입력해 주세요</h1>
                             <p className="admin-description">
-                                관리자 페이지에서는 뉴스정보, 판매 수치, Dot_blue 발생 빈도, 알림 수신 메일 주소를 직접 수정할 수 있습니다.
+                                관리자 페이지에서는 뉴스정보, 판매 수치, Dot_blue 발생 빈도를 직접 수정할 수 있습니다.
                             </p>
                         </div>
 
@@ -399,42 +330,6 @@ export default function AdminPage() {
                         {dotBlueFrequencyMessage ? <p className={`admin-message${dotBlueFrequencyMessage.includes('정수') ? ' is-error' : ''}`}>{dotBlueFrequencyMessage}</p> : null}
                         <div className="admin-actions admin-actions-center">
                             <button type="submit" className="admin-primary-button">발생 빈도 저장</button>
-                        </div>
-                    </form>
-                </section>
-
-                <section className="admin-card">
-                    <div className="admin-card-copy">
-                        <p className="admin-eyebrow">NOTIFICATION EMAIL</p>
-                        <h2 className="admin-section-title">알림 수신 메일 주소</h2>
-                        <p className="admin-description">문의사항이 접수되면 이 메일 주소로 알림이 전송됩니다.</p>
-                    </div>
-
-                    <form className="admin-form" onSubmit={handleSaveNotificationEmail}>
-                        <label className="admin-field">
-                            <input
-                                type="email"
-                                value={notificationEmailInput}
-                                onChange={(event) => {
-                                    setNotificationEmailInput(event.target.value);
-                                    setNotificationEmailMessage('');
-                                }}
-                                className="admin-input admin-input-large"
-                                placeholder="예: admin@example.com"
-                                disabled={isLoadingNotificationEmail}
-                            />
-                        </label>
-
-                        {notificationEmailMessage ? (
-                            <p className={`admin-message${notificationEmailMessage.includes('실패') || notificationEmailMessage.includes('입력') || notificationEmailMessage.includes('형식') ? ' is-error' : ''}`}>
-                                {notificationEmailMessage}
-                            </p>
-                        ) : null}
-
-                        <div className="admin-actions admin-actions-center">
-                            <button type="submit" className="admin-primary-button" disabled={isLoadingNotificationEmail}>
-                                {isLoadingNotificationEmail ? '불러오는 중...' : '메일 주소 저장'}
-                            </button>
                         </div>
                     </form>
                 </section>
