@@ -10,8 +10,12 @@ import logoHagobogo from '../../assets/svg/logo_haogobogo.svg';
 import chatbotLeo from '../../assets/svg/btn_chatbot.svg';
 import { DEFAULT_LANGUAGE, LANGUAGE_OPTIONS, TRANSLATIONS } from '../i18n/translations';
 import { CHATBOT_FAQ } from '../data/chatbotFaq';
-
-const SALES_STORAGE_KEY = 'sphere_count';
+import {
+    DEFAULT_SALES_COUNT,
+    SALES_STORAGE_KEY,
+    getStoredSalesCount,
+    getTickerOverrideItemsByLanguage,
+} from '../utils/adminSettings';
 const LANGUAGE_STORAGE_KEY = 'site_language';
 const PROPOSAL_FILE_BY_LANGUAGE = {
     EN: 'Hagobogo_Proposal_en_v01.html',
@@ -22,23 +26,13 @@ const PROPOSAL_FILE_BY_LANGUAGE = {
 
 export default function Dashboard() {
     const homeHref = `${import.meta.env.BASE_URL || './'}app.html`;
+    const adminHref = `${import.meta.env.BASE_URL || './'}app.html?view=admin`;
     const [sales, setSales] = useState(() => {
         if (typeof window === 'undefined') {
-            return 100000;
+            return DEFAULT_SALES_COUNT;
         }
 
-        try {
-            const savedSales = window.localStorage.getItem(SALES_STORAGE_KEY);
-            const parsedSales = Number(savedSales);
-
-            if (Number.isFinite(parsedSales) && parsedSales > 0) {
-                return parsedSales;
-            }
-        } catch {
-            // 저장소 접근이 막혀 있으면 기본 카운터 값으로 동작
-        }
-
-        return 100000;
+        return getStoredSalesCount();
     });
     const [language, setLanguage] = useState(() => {
         if (typeof window === 'undefined') {
@@ -79,6 +73,8 @@ export default function Dashboard() {
     const copy = TRANSLATIONS[language];
     const chatbotQuestions = CHATBOT_FAQ[language] || CHATBOT_FAQ.EN || [];
     const proposalFileName = PROPOSAL_FILE_BY_LANGUAGE[language] || PROPOSAL_FILE_BY_LANGUAGE.EN;
+    const tickerItems = getTickerOverrideItemsByLanguage(language);
+    const visibleTickerItems = tickerItems.length > 0 ? tickerItems : copy.ticker;
 
     useEffect(() => {
         return () => {
@@ -375,17 +371,33 @@ export default function Dashboard() {
             <div className="news-ticker-wrap">
                 <div className="news-ticker-track">
                     <div className="news-ticker-sequence">
-                        {copy.ticker.map(item => (
-                            <p key={item} className="news-ticker-text">
-                                {item}
-                            </p>
+                        {visibleTickerItems.map((item, index) => (
+                            item === '' ? (
+                                <div
+                                    key={`spacer-${index}`}
+                                    className="news-ticker-spacer"
+                                    aria-hidden="true"
+                                />
+                            ) : (
+                                <p key={`${item}-${index}`} className="news-ticker-text">
+                                    {item}
+                                </p>
+                            )
                         ))}
                     </div>
                     <div className="news-ticker-sequence" aria-hidden="true">
-                        {copy.ticker.map(item => (
-                            <p key={`duplicate-${item}`} className="news-ticker-text">
-                                {item}
-                            </p>
+                        {visibleTickerItems.map((item, index) => (
+                            item === '' ? (
+                                <div
+                                    key={`duplicate-spacer-${index}`}
+                                    className="news-ticker-spacer"
+                                    aria-hidden="true"
+                                />
+                            ) : (
+                                <p key={`duplicate-${item}-${index}`} className="news-ticker-text">
+                                    {item}
+                                </p>
+                            )
                         ))}
                     </div>
                 </div>
@@ -454,6 +466,7 @@ export default function Dashboard() {
                     <p>{copy.footer[4]}</p>
                     <p className="site-footer-spacer" aria-hidden="true"></p>
                     <p>{copy.footer[5]}</p>
+                    <a href={adminHref} className="site-footer-admin-link">Admin</a>
                 </footer>
             </div>
         </div>

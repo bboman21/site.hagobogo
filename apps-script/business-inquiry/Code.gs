@@ -2,6 +2,8 @@ const SHEET_NAME = 'Business Inquiries List';
 const MAX_INQUIRY_LENGTH = 3000;
 const SCRIPT_TIME_ZONE = 'Asia/Seoul';
 const NOTIFICATION_EMAIL_PROPERTY_KEY = 'BUSINESS_INQUIRY_NOTIFICATION_EMAIL';
+const ADMIN_PASSWORD_PROPERTY_KEY = 'ADMIN_PAGE_PASSWORD';
+const DEFAULT_ADMIN_PASSWORD = '0000';
 const STATUS_HEADER_NAME = 'Status';
 const DUPLICATE_SUBMISSION_WINDOW_SECONDS = 120;
 
@@ -25,6 +27,12 @@ function doPost(e) {
     }
 
     const payload = JSON.parse(e.postData.contents);
+    const adminActionResponse = handleAdminAction(payload);
+
+    if (adminActionResponse) {
+      return createJsonResponse(adminActionResponse);
+    }
+
     const validationError = validatePayload(payload);
     const spamError = checkSpamRisk(payload);
 
@@ -87,6 +95,57 @@ function doPost(e) {
   }
 }
 
+function handleAdminAction(payload) {
+  if (!payload || !payload.action) {
+    return null;
+  }
+
+  if (!isValidAdminPassword(payload.adminPassword)) {
+    return {
+      ok: false,
+      code: 'INVALID_ADMIN_PASSWORD',
+      message: '관리자 비밀번호가 올바르지 않습니다.'
+    };
+  }
+
+  if (payload.action === 'GET_NOTIFICATION_EMAIL') {
+    return {
+      ok: true,
+      code: 'NOTIFICATION_EMAIL_LOADED',
+      notificationEmail: getNotificationEmail() || ''
+    };
+  }
+
+  if (payload.action === 'SET_NOTIFICATION_EMAIL') {
+    const nextNotificationEmail = payload.notificationEmail;
+
+    if (!isValidEmail(nextNotificationEmail)) {
+      return {
+        ok: false,
+        code: 'INVALID_NOTIFICATION_EMAIL',
+        message: '알림 수신 메일 주소 형식이 올바르지 않습니다.'
+      };
+    }
+
+    PropertiesService
+      .getScriptProperties()
+      .setProperty(NOTIFICATION_EMAIL_PROPERTY_KEY, nextNotificationEmail.trim());
+
+    return {
+      ok: true,
+      code: 'NOTIFICATION_EMAIL_SAVED',
+      notificationEmail: nextNotificationEmail.trim(),
+      message: '알림 수신 메일 주소를 저장했습니다.'
+    };
+  }
+
+  return {
+    ok: false,
+    code: 'UNKNOWN_ADMIN_ACTION',
+    message: '알 수 없는 관리자 요청입니다.'
+  };
+}
+
 /**
  * 관리자에게 새 문의 접수 알림 이메일을 발송합니다.
  */
@@ -146,6 +205,21 @@ function getNotificationEmail() {
   return PropertiesService
     .getScriptProperties()
     .getProperty(NOTIFICATION_EMAIL_PROPERTY_KEY);
+}
+
+function getAdminPassword() {
+  return PropertiesService
+    .getScriptProperties()
+    .getProperty(ADMIN_PASSWORD_PROPERTY_KEY) || DEFAULT_ADMIN_PASSWORD;
+}
+
+function isValidAdminPassword(value) {
+  return typeof value === 'string' && value === getAdminPassword();
+}
+
+function isValidEmail(value) {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return typeof value === 'string' && emailPattern.test(value.trim());
 }
 
 function getStatusColumnIndex(sheet) {
@@ -211,8 +285,6 @@ function truncateStatusMessage(message) {
 }
 
 function validatePayload(payload) {
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
   if (!payload || typeof payload !== 'object') {
     return {
       ok: false,
@@ -253,7 +325,7 @@ function validatePayload(payload) {
     };
   }
 
-  if (!emailPattern.test(payload.email.trim())) {
+  if (!isValidEmail(payload.email)) {
     return {
       ok: false,
       code: 'INVALID_EMAIL',

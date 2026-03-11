@@ -2,13 +2,20 @@ import React from 'react';
 import dotHeadBlue from '../../assets/svg/dot_head_blue.svg';
 import useDotEngine from '../hooks/useDotEngine';
 import DotItem from './DotItem';
+import { getDotBlueSpawnFrequencyRange } from '../utils/adminSettings';
 
 const COLLISION_FADE_DURATION_MS = 1000;
+const ONE_HOUR_MS = 60 * 60 * 1000;
 
 export default function DotBlueEngine({ onHit, targetCenter, collisionRadius }) {
+    const dotBlueSpawnFrequencyRange = getDotBlueSpawnFrequencyRange();
+    const minSpawnDelayMs = ONE_HOUR_MS / dotBlueSpawnFrequencyRange.max;
+    const maxSpawnDelayMs = ONE_HOUR_MS / dotBlueSpawnFrequencyRange.min;
     const dots = useDotEngine(onHit, collisionRadius, {
         speedMultiplier: 0.5,
         accelerationGainPerStep: 1.05,
+        minSpawnDelayMs,
+        maxSpawnDelayMs,
     });
 
     return (

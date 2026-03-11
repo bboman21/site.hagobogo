@@ -68,8 +68,7 @@ export const TRANSLATIONS = {
             'Company Name Representative: Kim Ji-hoon, CEO of INTIN Inc.',
             'Location: 52 Cheombok-ro, Dong-gu, Daegu',
             'Business Registration Number: 108-81-90649 | Mail-Order Sales Registration Number: No. 2018-Daegu Dong-gu-0025',
-            'Privacy Officer: Lee Yoo-jin',
-            'Contact: 070-4239-9899 | help@intin.kr',
+            'Contact: help@intin.kr',
         ],
     },
     ES: {
@@ -137,8 +136,7 @@ export const TRANSLATIONS = {
             'Nombre de la empresa y representante: Kim Ji-hoon, director ejecutivo de INTIN Inc.',
             'Ubicación: 52 Cheombok-ro, Dong-gu, Daegu',
             'Número de registro comercial: 108-81-90649 | Número de registro de venta por correo: No. 2018-Daegu Dong-gu-0025',
-            'Responsable de privacidad: Lee Yoo-jin',
-            'Contacto: 070-4239-9899 | help@intin.kr',
+            'Contacto: help@intin.kr',
         ],
     },
     FR: {
@@ -206,8 +204,7 @@ export const TRANSLATIONS = {
             "Nom de l'entreprise et représentant : Kim Ji-hoon, PDG d'INTIN Inc.",
             'Adresse : 52 Cheombok-ro, Dong-gu, Daegu',
             'Numéro d’immatriculation commerciale : 108-81-90649 | Numéro d’enregistrement de vente à distance : No. 2018-Daegu Dong-gu-0025',
-            'Responsable de la protection des données : Lee Yoo-jin',
-            'Contact : 070-4239-9899 | help@intin.kr',
+            'Contact : help@intin.kr',
         ],
     },
     KR: {
@@ -275,8 +272,7 @@ export const TRANSLATIONS = {
             '회사명 대표자 : (주)인트인 대표 김지훈',
             '소재지 : 대구광역시 동구 첨복로 52',
             '사업자 등록번호 : 108-81-90649 | 통신판매신고번호 : 제2018-대구동구-0025호',
-            '개인정보관리책임자 : 이유진',
-            '문의 : 070-4239-9899 | help@intin.kr',
+            '문의 : help@intin.kr',
         ],
     },
 };
