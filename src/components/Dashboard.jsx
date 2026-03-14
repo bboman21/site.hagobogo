@@ -11,11 +11,13 @@ import chatbotLeo from '../../assets/svg/btn_chatbot.svg';
 import { DEFAULT_LANGUAGE, LANGUAGE_OPTIONS, TRANSLATIONS } from '../i18n/translations';
 import { CHATBOT_FAQ } from '../data/chatbotFaq';
 import {
+    createEmptyTickerItemsByLanguageMap,
+    DEFAULT_DOT_BLUE_SPAWN_FREQUENCY_RANGE,
     DEFAULT_SALES_COUNT,
-    SALES_STORAGE_KEY,
-    getStoredSalesCount,
-    getTickerOverrideItemsByLanguage,
+    normalizeAdminSiteSettings,
 } from '../utils/adminSettings';
+import { fetchPublicSiteSettings } from '../lib/adminApi';
+
 const LANGUAGE_STORAGE_KEY = 'site_language';
 const PROPOSAL_FILE_BY_LANGUAGE = {
     EN: 'Hagobogo_Proposal_en_v01.html',
@@ -24,16 +26,28 @@ const PROPOSAL_FILE_BY_LANGUAGE = {
     KR: 'Hagobogo_Proposal_kr_v01.html',
 };
 
+function createInitialTargetMetrics() {
+    if (typeof window === 'undefined') {
+        return {
+            center: { x: 0, y: 0 },
+            sphereDiameter: 400,
+            collisionRadius: 100,
+            sphereRadius: 200,
+        };
+    }
+
+    return {
+        center: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
+        sphereDiameter: 400,
+        collisionRadius: 100,
+        sphereRadius: 200,
+    };
+}
+
 export default function Dashboard() {
     const homeHref = `${import.meta.env.BASE_URL || './'}app.html`;
     const adminHref = `${import.meta.env.BASE_URL || './'}app.html?view=admin`;
-    const [sales, setSales] = useState(() => {
-        if (typeof window === 'undefined') {
-            return DEFAULT_SALES_COUNT;
-        }
-
-        return getStoredSalesCount();
-    });
+    const [sales, setSales] = useState(DEFAULT_SALES_COUNT);
     const [language, setLanguage] = useState(() => {
         if (typeof window === 'undefined') {
             return DEFAULT_LANGUAGE;
@@ -50,17 +64,17 @@ export default function Dashboard() {
 
         return DEFAULT_LANGUAGE;
     });
+    const [siteSettings, setSiteSettings] = useState(() => normalizeAdminSiteSettings({
+        salesCount: DEFAULT_SALES_COUNT,
+        dotBlueSpawnFrequencyRange: DEFAULT_DOT_BLUE_SPAWN_FREQUENCY_RANGE,
+        tickerItemsByLanguage: createEmptyTickerItemsByLanguageMap(),
+    }));
     const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false);
     const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
     const [isPulsing, setIsPulsing] = useState(false);
     const [isLineHit, setIsLineHit] = useState(false);
-    const [targetMetrics, setTargetMetrics] = useState({
-        center: { x: window.innerWidth / 2, y: window.innerHeight / 2 },
-        sphereDiameter: 400,
-        collisionRadius: 100,
-        sphereRadius: 200,
-    });
+    const [targetMetrics, setTargetMetrics] = useState(createInitialTargetMetrics);
     const pulseTimeoutRef = useRef(null);
     const lineTimeoutRef = useRef(null);
     const sphereGroupRef = useRef(null);
@@ -73,8 +87,30 @@ export default function Dashboard() {
     const copy = TRANSLATIONS[language];
     const chatbotQuestions = CHATBOT_FAQ[language] || CHATBOT_FAQ.EN || [];
     const proposalFileName = PROPOSAL_FILE_BY_LANGUAGE[language] || PROPOSAL_FILE_BY_LANGUAGE.EN;
-    const tickerItems = getTickerOverrideItemsByLanguage(language);
+    const tickerItems = siteSettings.tickerItemsByLanguage[language] || [];
     const visibleTickerItems = tickerItems.length > 0 ? tickerItems : copy.ticker;
+
+    useEffect(() => {
+        let isMounted = true;
+
+        fetchPublicSiteSettings()
+            .then((nextSiteSettings) => {
+                if (!isMounted) {
+                    return;
+                }
+
+                const normalizedSettings = normalizeAdminSiteSettings(nextSiteSettings);
+                setSiteSettings(normalizedSettings);
+                setSales(normalizedSettings.salesCount);
+            })
+            .catch((error) => {
+                console.error('공개 사이트 설정을 불러오지 못했습니다.', error);
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     useEffect(() => {
         return () => {
@@ -86,14 +122,6 @@ export default function Dashboard() {
             }
         };
     }, []);
-
-    useEffect(() => {
-        try {
-            window.localStorage.setItem(SALES_STORAGE_KEY, String(sales));
-        } catch {
-            // 제한된 환경에서도 카운터 기능이 유지되도록 저장 오류는 무시
-        }
-    }, [sales]);
 
     useEffect(() => {
         try {
@@ -208,7 +236,9 @@ export default function Dashboard() {
 
     useEffect(() => {
         const updateTargetMetrics = () => {
-            if (!sphereGroupRef.current) return;
+            if (!sphereGroupRef.current) {
+                return;
+            }
 
             const rect = sphereGroupRef.current.getBoundingClientRect();
             const sphereDiameter = rect.width;
@@ -239,7 +269,7 @@ export default function Dashboard() {
     }, []);
 
     const handleHit = useCallback(() => {
-        setSales(prev => prev + 1);
+        setSales((prev) => prev + 1);
         setIsPulsing(false);
         setIsLineHit(false);
         if (pulseTimeoutRef.current) {
@@ -287,6 +317,7 @@ export default function Dashboard() {
 
             {isChatbotOpen && (
                 <ChatbotPanel
+                    key={language}
                     copy={copy.chatbotPanel}
                     questions={chatbotQuestions}
                     onClose={() => setIsChatbotOpen(false)}
@@ -295,7 +326,6 @@ export default function Dashboard() {
                 />
             )}
 
-            {/* 실시간 파티클 배경 컨테이너 */}
             <div className="absolute inset-0 w-full h-full min-h-full pointer-events-none">
                 <DotEmptyEngine
                     targetCenter={targetMetrics.center}
@@ -309,6 +339,7 @@ export default function Dashboard() {
                     onHit={handleHit}
                     targetCenter={targetMetrics.center}
                     collisionRadius={targetMetrics.collisionRadius}
+                    spawnFrequencyRange={siteSettings.dotBlueSpawnFrequencyRange}
                 />
             </div>
 
@@ -341,14 +372,14 @@ export default function Dashboard() {
                             className="text-cta text-nav-cta language-trigger"
                             aria-haspopup="menu"
                             aria-expanded={isLanguageMenuOpen}
-                            onClick={() => setIsLanguageMenuOpen(prev => !prev)}
+                            onClick={() => setIsLanguageMenuOpen((prev) => !prev)}
                         >
                             {language}
                         </button>
 
                         {isLanguageMenuOpen && (
                             <div className="language-dropdown absolute right-0 top-full mt-[8px] flex flex-col" role="menu">
-                                {LANGUAGE_OPTIONS.filter(option => option !== language).map(option => (
+                                {LANGUAGE_OPTIONS.filter((option) => option !== language).map((option) => (
                                     <button
                                         key={option}
                                         type="button"
@@ -421,7 +452,6 @@ export default function Dashboard() {
                     </button>
                 </div>
 
-                {/* 제안서 삽입 영역 (흰색 아웃라인 보드) */}
                 <div
                     ref={proposalBoardRef}
                     className="introduction-board"
@@ -445,7 +475,6 @@ export default function Dashboard() {
                     </button>
                 </div>
 
-                {/* 우측 하단 플로팅 챗봇 버튼 */}
                 <button
                     type="button"
                     className="chatbot-fab"
@@ -464,8 +493,6 @@ export default function Dashboard() {
                     <p className="site-footer-spacer" aria-hidden="true"></p>
                     <p>{copy.footer[3]}</p>
                     <p>{copy.footer[4]}</p>
-                    <p className="site-footer-spacer" aria-hidden="true"></p>
-                    <p>{copy.footer[5]}</p>
                     <a href={adminHref} className="site-footer-admin-link">Admin</a>
                 </footer>
             </div>

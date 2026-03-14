@@ -1,23 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import AdminTickerEditor from './AdminTickerEditor';
 import logoHagobogo from '../../assets/svg/logo_haogobogo.svg';
+import { authenticateAdmin, fetchAdminSettings, saveAdminSettings } from '../lib/adminApi';
 import { TRANSLATIONS } from '../i18n/translations';
 import {
-    ADMIN_PASSWORD,
+    ADMIN_SETTING_LANGUAGES,
     formatTickerTextarea,
-    getDotBlueSpawnFrequencyRange,
-    getStoredSalesCount,
-    getTickerOverrideItemsByLanguage,
-    isAdminAuthenticated,
+    normalizeAdminSiteSettings,
     parseTickerTextarea,
-    setAdminAuthenticated,
-    setDotBlueSpawnFrequencyRange,
-    setStoredSalesCount,
-    setTickerOverrideItemsByLanguageMap,
     TICKER_SPACE_TOKEN,
 } from '../utils/adminSettings';
-
-const TICKER_LANGUAGES = ['EN', 'FR', 'ES', 'KR'];
 
 function parseNumericInput(value) {
     const digitsOnly = String(value).replace(/[^\d]/g, '');
@@ -34,23 +26,50 @@ function formatNumericInput(value) {
     return Number(digitsOnly).toLocaleString('en-US');
 }
 
+function createDefaultTickerInputs() {
+    return {
+        EN: [...TRANSLATIONS.EN.ticker],
+        FR: [...TRANSLATIONS.FR.ticker],
+        ES: [...TRANSLATIONS.ES.ticker],
+        KR: [...TRANSLATIONS.KR.ticker],
+    };
+}
+
+function buildSiteSettingsFromForm({ notificationEmailInput, salesInput, dotBlueFrequencyMinInput, dotBlueFrequencyMaxInput, tickerInputs }) {
+    const nextTickerItems = ADMIN_SETTING_LANGUAGES.reduce((accumulator, language) => {
+        accumulator[language] = parseTickerTextarea(formatTickerTextarea(tickerInputs[language]));
+        return accumulator;
+    }, {});
+
+    return normalizeAdminSiteSettings({
+        notificationEmail: notificationEmailInput.trim(),
+        salesCount: parseNumericInput(salesInput),
+        dotBlueSpawnFrequencyRange: {
+            min: parseNumericInput(dotBlueFrequencyMinInput),
+            max: parseNumericInput(dotBlueFrequencyMaxInput),
+        },
+        tickerItemsByLanguage: nextTickerItems,
+    });
+}
+
 export default function AdminPage() {
     const homeHref = `${import.meta.env.BASE_URL || './'}app.html`;
+    const adminPasswordRef = useRef('');
     const [passwordInput, setPasswordInput] = useState('');
-    const [isAuthenticated, setIsAuthenticated] = useState(() => isAdminAuthenticated());
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isAuthenticating, setIsAuthenticating] = useState(false);
+    const [isLoadingSettings, setIsLoadingSettings] = useState(false);
     const [passwordError, setPasswordError] = useState('');
-    const [tickerInputs, setTickerInputs] = useState({
-        EN: [],
-        FR: [],
-        ES: [],
-        KR: [],
-    });
+    const [tickerInputs, setTickerInputs] = useState(createDefaultTickerInputs);
     const [tickerMessage, setTickerMessage] = useState('');
     const [salesInput, setSalesInput] = useState('');
     const [salesMessage, setSalesMessage] = useState('');
     const [dotBlueFrequencyMinInput, setDotBlueFrequencyMinInput] = useState('');
     const [dotBlueFrequencyMaxInput, setDotBlueFrequencyMaxInput] = useState('');
     const [dotBlueFrequencyMessage, setDotBlueFrequencyMessage] = useState('');
+    const [notificationEmailInput, setNotificationEmailInput] = useState('');
+    const [notificationEmailMessage, setNotificationEmailMessage] = useState('');
+    const [isSavingNotificationEmail, setIsSavingNotificationEmail] = useState(false);
     const parsedDotBlueFrequencyMin = parseNumericInput(dotBlueFrequencyMinInput);
     const parsedDotBlueFrequencyMax = parseNumericInput(dotBlueFrequencyMaxInput);
     const hasValidDotBlueFrequencyPreview = (
@@ -72,45 +91,87 @@ export default function AdminPage() {
         }
         : null;
 
-    useEffect(() => {
-        setTickerInputs({
-            EN: getTickerOverrideItemsByLanguage('EN').length > 0 ? getTickerOverrideItemsByLanguage('EN') : TRANSLATIONS.EN.ticker,
-            FR: getTickerOverrideItemsByLanguage('FR').length > 0 ? getTickerOverrideItemsByLanguage('FR') : TRANSLATIONS.FR.ticker,
-            ES: getTickerOverrideItemsByLanguage('ES').length > 0 ? getTickerOverrideItemsByLanguage('ES') : TRANSLATIONS.ES.ticker,
-            KR: getTickerOverrideItemsByLanguage('KR').length > 0 ? getTickerOverrideItemsByLanguage('KR') : TRANSLATIONS.KR.ticker,
-        });
-        setSalesInput(formatNumericInput(getStoredSalesCount()));
-        const dotBlueFrequencyRange = getDotBlueSpawnFrequencyRange();
-        setDotBlueFrequencyMinInput(formatNumericInput(dotBlueFrequencyRange.min));
-        setDotBlueFrequencyMaxInput(formatNumericInput(dotBlueFrequencyRange.max));
-    }, []);
+    const applySiteSettings = (siteSettings) => {
+        const normalizedSettings = normalizeAdminSiteSettings(siteSettings);
 
-    const handleAuthenticate = (event) => {
+        setTickerInputs({
+            EN: normalizedSettings.tickerItemsByLanguage.EN.length > 0 ? normalizedSettings.tickerItemsByLanguage.EN : [...TRANSLATIONS.EN.ticker],
+            FR: normalizedSettings.tickerItemsByLanguage.FR.length > 0 ? normalizedSettings.tickerItemsByLanguage.FR : [...TRANSLATIONS.FR.ticker],
+            ES: normalizedSettings.tickerItemsByLanguage.ES.length > 0 ? normalizedSettings.tickerItemsByLanguage.ES : [...TRANSLATIONS.ES.ticker],
+            KR: normalizedSettings.tickerItemsByLanguage.KR.length > 0 ? normalizedSettings.tickerItemsByLanguage.KR : [...TRANSLATIONS.KR.ticker],
+        });
+        setSalesInput(formatNumericInput(normalizedSettings.salesCount));
+        setDotBlueFrequencyMinInput(formatNumericInput(normalizedSettings.dotBlueSpawnFrequencyRange.min));
+        setDotBlueFrequencyMaxInput(formatNumericInput(normalizedSettings.dotBlueSpawnFrequencyRange.max));
+        setNotificationEmailInput(normalizedSettings.notificationEmail);
+    };
+
+    const loadAdminSettings = async (adminPassword) => {
+        setIsLoadingSettings(true);
+        setTickerMessage('');
+        setSalesMessage('');
+        setDotBlueFrequencyMessage('');
+        setNotificationEmailMessage('');
+
+        try {
+            const siteSettings = await fetchAdminSettings(adminPassword);
+            applySiteSettings(siteSettings);
+        } catch (error) {
+            setIsAuthenticated(false);
+            adminPasswordRef.current = '';
+            setPasswordError(error.message || '관리자 설정을 불러오지 못했습니다.');
+        } finally {
+            setIsLoadingSettings(false);
+        }
+    };
+
+    const handleAuthenticate = async (event) => {
         event.preventDefault();
 
-        if (passwordInput !== ADMIN_PASSWORD) {
-            setPasswordError('비밀번호가 올바르지 않습니다.');
+        if (!passwordInput.trim()) {
+            setPasswordError('비밀번호를 입력해 주세요.');
             return;
         }
 
-        setAdminAuthenticated(true);
+        setIsAuthenticating(true);
         setPasswordError('');
-        setIsAuthenticated(true);
+
+        try {
+            await authenticateAdmin(passwordInput);
+            adminPasswordRef.current = passwordInput;
+            setIsAuthenticated(true);
+            await loadAdminSettings(passwordInput);
+        } catch (error) {
+            adminPasswordRef.current = '';
+            setIsAuthenticated(false);
+            setPasswordError(error.message || '비밀번호가 올바르지 않습니다.');
+        } finally {
+            setIsAuthenticating(false);
+        }
     };
 
-    const handleSaveTicker = (event) => {
+    const handleSaveTicker = async (event) => {
         event.preventDefault();
 
-        const nextTickerItems = TICKER_LANGUAGES.reduce((accumulator, language) => {
-            accumulator[language] = parseTickerTextarea(formatTickerTextarea(tickerInputs[language]));
-            return accumulator;
-        }, {});
-
-        setTickerOverrideItemsByLanguageMap(nextTickerItems);
-        setTickerMessage('뉴스정보를 저장했습니다.');
+        try {
+            const savedSettings = await saveAdminSettings(
+                adminPasswordRef.current,
+                buildSiteSettingsFromForm({
+                    notificationEmailInput,
+                    salesInput,
+                    dotBlueFrequencyMinInput,
+                    dotBlueFrequencyMaxInput,
+                    tickerInputs,
+                })
+            );
+            applySiteSettings(savedSettings);
+            setTickerMessage('뉴스정보를 저장했습니다.');
+        } catch (error) {
+            setTickerMessage(error.message || '뉴스정보 저장에 실패했습니다.');
+        }
     };
 
-    const handleSaveSales = (event) => {
+    const handleSaveSales = async (event) => {
         event.preventDefault();
 
         const nextSales = parseNumericInput(salesInput);
@@ -119,12 +180,25 @@ export default function AdminPage() {
             return;
         }
 
-        setStoredSalesCount(nextSales);
-        setSalesInput(formatNumericInput(nextSales));
-        setSalesMessage('판매 수치를 저장했습니다.');
+        try {
+            const savedSettings = await saveAdminSettings(
+                adminPasswordRef.current,
+                buildSiteSettingsFromForm({
+                    notificationEmailInput,
+                    salesInput,
+                    dotBlueFrequencyMinInput,
+                    dotBlueFrequencyMaxInput,
+                    tickerInputs,
+                })
+            );
+            applySiteSettings(savedSettings);
+            setSalesMessage('판매 수치를 저장했습니다.');
+        } catch (error) {
+            setSalesMessage(error.message || '판매 수치 저장에 실패했습니다.');
+        }
     };
 
-    const handleSaveDotBlueFrequency = (event) => {
+    const handleSaveDotBlueFrequency = async (event) => {
         event.preventDefault();
 
         const minFrequency = parseNumericInput(dotBlueFrequencyMinInput);
@@ -142,15 +216,61 @@ export default function AdminPage() {
             return;
         }
 
-        const normalizedRange = {
-            min: Math.min(minFrequency, maxFrequency),
-            max: Math.max(minFrequency, maxFrequency),
-        };
+        try {
+            const savedSettings = await saveAdminSettings(
+                adminPasswordRef.current,
+                buildSiteSettingsFromForm({
+                    notificationEmailInput,
+                    salesInput,
+                    dotBlueFrequencyMinInput,
+                    dotBlueFrequencyMaxInput,
+                    tickerInputs,
+                })
+            );
+            applySiteSettings(savedSettings);
+            setDotBlueFrequencyMessage('Dot_blue 시간당 발생 빈도를 저장했습니다.');
+        } catch (error) {
+            setDotBlueFrequencyMessage(error.message || 'Dot_blue 발생 빈도 저장에 실패했습니다.');
+        }
+    };
 
-        setDotBlueSpawnFrequencyRange(normalizedRange);
-        setDotBlueFrequencyMinInput(formatNumericInput(normalizedRange.min));
-        setDotBlueFrequencyMaxInput(formatNumericInput(normalizedRange.max));
-        setDotBlueFrequencyMessage('Dot_blue 시간당 발생 빈도를 저장했습니다.');
+    const handleSaveNotificationEmail = async (event) => {
+        event.preventDefault();
+
+        const trimmedEmail = notificationEmailInput.trim();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if (!trimmedEmail) {
+            setNotificationEmailMessage('알림 수신 메일 주소를 입력해 주세요.');
+            return;
+        }
+
+        if (!emailPattern.test(trimmedEmail)) {
+            setNotificationEmailMessage('올바른 이메일 형식으로 입력해 주세요.');
+            return;
+        }
+
+        setIsSavingNotificationEmail(true);
+        setNotificationEmailMessage('');
+
+        try {
+            const savedSettings = await saveAdminSettings(
+                adminPasswordRef.current,
+                buildSiteSettingsFromForm({
+                    notificationEmailInput,
+                    salesInput,
+                    dotBlueFrequencyMinInput,
+                    dotBlueFrequencyMaxInput,
+                    tickerInputs,
+                })
+            );
+            applySiteSettings(savedSettings);
+            setNotificationEmailMessage('알림 수신 메일 주소를 저장했습니다.');
+        } catch (error) {
+            setNotificationEmailMessage(error.message || '알림 수신 메일 주소 저장에 실패했습니다.');
+        } finally {
+            setIsSavingNotificationEmail(false);
+        }
     };
 
     if (!isAuthenticated) {
@@ -172,7 +292,7 @@ export default function AdminPage() {
                             <p className="admin-eyebrow">ADMIN</p>
                             <h1 className="admin-title">관리자 비밀번호를 입력해 주세요</h1>
                             <p className="admin-description">
-                                관리자 페이지에서는 뉴스정보, 판매 수치, Dot_blue 발생 빈도를 직접 수정할 수 있습니다.
+                                관리자 페이지에서는 뉴스정보, 판매 수치, Dot_blue 발생 빈도, 알림 수신 메일 주소를 직접 수정할 수 있습니다.
                             </p>
                         </div>
 
@@ -185,13 +305,16 @@ export default function AdminPage() {
                                     onChange={(event) => setPasswordInput(event.target.value)}
                                     className="admin-input"
                                     placeholder="비밀번호를 입력해 주세요"
+                                    disabled={isAuthenticating}
                                 />
                             </label>
 
                             {passwordError ? <p className="admin-message is-error">{passwordError}</p> : null}
 
                             <div className="admin-actions">
-                                <button type="submit" className="admin-primary-button">입장하기</button>
+                                <button type="submit" className="admin-primary-button" disabled={isAuthenticating}>
+                                    {isAuthenticating ? '확인 중...' : '입장하기'}
+                                </button>
                                 <a href={homeHref} className="admin-secondary-button">메인으로 돌아가기</a>
                             </div>
                         </form>
@@ -214,6 +337,12 @@ export default function AdminPage() {
             </header>
 
             <main className="mx-auto mt-[48px] flex w-full max-w-[1120px] flex-col gap-[18px] pb-[80px]">
+                {isLoadingSettings ? (
+                    <section className="admin-card">
+                        <p className="admin-description">관리자 설정을 불러오는 중입니다.</p>
+                    </section>
+                ) : null}
+
                 <section className="admin-card">
                     <div className="admin-card-copy">
                         <p className="admin-eyebrow">NEWS TICKER</p>
@@ -227,7 +356,7 @@ export default function AdminPage() {
 
                     <form className="admin-form" onSubmit={handleSaveTicker}>
                         <div className="admin-language-grid">
-                            {TICKER_LANGUAGES.map((language) => (
+                            {ADMIN_SETTING_LANGUAGES.map((language) => (
                                 <AdminTickerEditor
                                     key={language}
                                     label={language}
@@ -243,9 +372,9 @@ export default function AdminPage() {
                             ))}
                         </div>
 
-                        {tickerMessage ? <p className="admin-message">{tickerMessage}</p> : null}
+                        {tickerMessage ? <p className={`admin-message${tickerMessage.includes('실패') ? ' is-error' : ''}`}>{tickerMessage}</p> : null}
                         <div className="admin-actions admin-actions-center">
-                            <button type="submit" className="admin-primary-button">뉴스정보 저장</button>
+                            <button type="submit" className="admin-primary-button" disabled={isLoadingSettings}>뉴스정보 저장</button>
                         </div>
                     </form>
                 </section>
@@ -272,9 +401,9 @@ export default function AdminPage() {
                             />
                         </label>
 
-                        {salesMessage ? <p className={`admin-message${salesMessage.includes('정수') ? ' is-error' : ''}`}>{salesMessage}</p> : null}
+                        {salesMessage ? <p className={`admin-message${salesMessage.includes('정수') || salesMessage.includes('실패') ? ' is-error' : ''}`}>{salesMessage}</p> : null}
                         <div className="admin-actions admin-actions-center">
-                            <button type="submit" className="admin-primary-button">판매 수치 저장</button>
+                            <button type="submit" className="admin-primary-button" disabled={isLoadingSettings}>판매 수치 저장</button>
                         </div>
                     </form>
                 </section>
@@ -327,9 +456,45 @@ export default function AdminPage() {
                                     : ''}
                             </p>
                         ) : null}
-                        {dotBlueFrequencyMessage ? <p className={`admin-message${dotBlueFrequencyMessage.includes('정수') ? ' is-error' : ''}`}>{dotBlueFrequencyMessage}</p> : null}
+                        {dotBlueFrequencyMessage ? <p className={`admin-message${dotBlueFrequencyMessage.includes('정수') || dotBlueFrequencyMessage.includes('실패') ? ' is-error' : ''}`}>{dotBlueFrequencyMessage}</p> : null}
                         <div className="admin-actions admin-actions-center">
-                            <button type="submit" className="admin-primary-button">발생 빈도 저장</button>
+                            <button type="submit" className="admin-primary-button" disabled={isLoadingSettings}>발생 빈도 저장</button>
+                        </div>
+                    </form>
+                </section>
+
+                <section className="admin-card">
+                    <div className="admin-card-copy">
+                        <p className="admin-eyebrow">NOTIFICATION EMAIL</p>
+                        <h2 className="admin-section-title">알림 수신 메일 주소</h2>
+                        <p className="admin-description">문의사항이 접수되면 이 메일 주소로 알림이 전송됩니다.</p>
+                    </div>
+
+                    <form className="admin-form" onSubmit={handleSaveNotificationEmail}>
+                        <label className="admin-field">
+                            <input
+                                type="email"
+                                value={notificationEmailInput}
+                                onChange={(event) => {
+                                    setNotificationEmailInput(event.target.value);
+                                    setNotificationEmailMessage('');
+                                }}
+                                className="admin-input admin-input-large"
+                                placeholder="예: admin@example.com"
+                                disabled={isSavingNotificationEmail}
+                            />
+                        </label>
+
+                        {notificationEmailMessage ? (
+                            <p className={`admin-message${notificationEmailMessage.includes('실패') || notificationEmailMessage.includes('입력') || notificationEmailMessage.includes('형식') ? ' is-error' : ''}`}>
+                                {notificationEmailMessage}
+                            </p>
+                        ) : null}
+
+                        <div className="admin-actions admin-actions-center">
+                            <button type="submit" className="admin-primary-button" disabled={isSavingNotificationEmail}>
+                                {isSavingNotificationEmail ? '저장 중...' : '메일 주소 저장'}
+                            </button>
                         </div>
                     </form>
                 </section>

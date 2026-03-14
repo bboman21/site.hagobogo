@@ -15,6 +15,7 @@ GitHub Actions를 통해 `main` 브랜치에 push하면 자동으로 빌드 → 
 
 ```text
 VITE_BUSINESS_INQUIRY_API_URL=Apps Script 웹앱 URL
+VITE_ADMIN_SETTINGS_API_URL=Apps Script 웹앱 URL
 ```
 
 ## 현재 사이트 구조
@@ -36,6 +37,7 @@ Apps Script 쪽 필수 조건:
 
 ```text
 BUSINESS_INQUIRY_NOTIFICATION_EMAIL=알림을 받을 실제 이메일 주소
+ADMIN_PAGE_PASSWORD=관리자 페이지 비밀번호
 ```
 
 ## 로컬 개발 실행

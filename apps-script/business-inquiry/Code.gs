@@ -4,6 +4,15 @@ const SCRIPT_TIME_ZONE = 'Asia/Seoul';
 const NOTIFICATION_EMAIL_PROPERTY_KEY = 'BUSINESS_INQUIRY_NOTIFICATION_EMAIL';
 const ADMIN_PASSWORD_PROPERTY_KEY = 'ADMIN_PAGE_PASSWORD';
 const DEFAULT_ADMIN_PASSWORD = '0000';
+const SALES_COUNT_PROPERTY_KEY = 'SITE_SALES_COUNT';
+const DOT_BLUE_RANGE_PROPERTY_KEY = 'SITE_DOT_BLUE_RANGE_JSON';
+const TICKER_ITEMS_PROPERTY_KEY = 'SITE_TICKER_ITEMS_BY_LANGUAGE_JSON';
+const DEFAULT_SALES_COUNT = 100000;
+const DEFAULT_DOT_BLUE_RANGE = {
+  min: 900,
+  max: 1440
+};
+const SUPPORTED_LANGUAGES = ['EN', 'FR', 'ES', 'KR'];
 const STATUS_HEADER_NAME = 'Status';
 const DUPLICATE_SUBMISSION_WINDOW_SECONDS = 120;
 
@@ -100,6 +109,14 @@ function handleAdminAction(payload) {
     return null;
   }
 
+  if (payload.action === 'GET_PUBLIC_SITE_SETTINGS') {
+    return {
+      ok: true,
+      code: 'PUBLIC_SITE_SETTINGS_LOADED',
+      siteSettings: getSiteSettings()
+    };
+  }
+
   if (!isValidAdminPassword(payload.adminPassword)) {
     return {
       ok: false,
@@ -108,34 +125,36 @@ function handleAdminAction(payload) {
     };
   }
 
-  if (payload.action === 'GET_NOTIFICATION_EMAIL') {
+  if (payload.action === 'AUTHENTICATE_ADMIN') {
     return {
       ok: true,
-      code: 'NOTIFICATION_EMAIL_LOADED',
-      notificationEmail: getNotificationEmail() || ''
+      code: 'ADMIN_AUTHENTICATED',
+      message: '관리자 인증에 성공했습니다.'
     };
   }
 
-  if (payload.action === 'SET_NOTIFICATION_EMAIL') {
-    const nextNotificationEmail = payload.notificationEmail;
+  if (payload.action === 'GET_ADMIN_SETTINGS') {
+    return {
+      ok: true,
+      code: 'ADMIN_SETTINGS_LOADED',
+      siteSettings: getSiteSettings()
+    };
+  }
 
-    if (!isValidEmail(nextNotificationEmail)) {
-      return {
-        ok: false,
-        code: 'INVALID_NOTIFICATION_EMAIL',
-        message: '알림 수신 메일 주소 형식이 올바르지 않습니다.'
-      };
+  if (payload.action === 'SAVE_ADMIN_SETTINGS') {
+    const validationError = validateSiteSettings(payload.siteSettings);
+
+    if (validationError) {
+      return validationError;
     }
 
-    PropertiesService
-      .getScriptProperties()
-      .setProperty(NOTIFICATION_EMAIL_PROPERTY_KEY, nextNotificationEmail.trim());
+    const savedSettings = saveSiteSettings(payload.siteSettings);
 
     return {
       ok: true,
-      code: 'NOTIFICATION_EMAIL_SAVED',
-      notificationEmail: nextNotificationEmail.trim(),
-      message: '알림 수신 메일 주소를 저장했습니다.'
+      code: 'ADMIN_SETTINGS_SAVED',
+      message: '관리자 설정을 저장했습니다.',
+      siteSettings: savedSettings
     };
   }
 
@@ -207,6 +226,27 @@ function getNotificationEmail() {
     .getProperty(NOTIFICATION_EMAIL_PROPERTY_KEY);
 }
 
+function getSiteSettings() {
+  return {
+    notificationEmail: getNotificationEmail() || '',
+    salesCount: getSalesCount(),
+    dotBlueSpawnFrequencyRange: getDotBlueSpawnFrequencyRange(),
+    tickerItemsByLanguage: getTickerItemsByLanguage()
+  };
+}
+
+function saveSiteSettings(siteSettings) {
+  const nextSettings = normalizeSiteSettings(siteSettings);
+  const scriptProperties = PropertiesService.getScriptProperties();
+
+  scriptProperties.setProperty(NOTIFICATION_EMAIL_PROPERTY_KEY, nextSettings.notificationEmail);
+  scriptProperties.setProperty(SALES_COUNT_PROPERTY_KEY, String(nextSettings.salesCount));
+  scriptProperties.setProperty(DOT_BLUE_RANGE_PROPERTY_KEY, JSON.stringify(nextSettings.dotBlueSpawnFrequencyRange));
+  scriptProperties.setProperty(TICKER_ITEMS_PROPERTY_KEY, JSON.stringify(nextSettings.tickerItemsByLanguage));
+
+  return nextSettings;
+}
+
 function getAdminPassword() {
   return PropertiesService
     .getScriptProperties()
@@ -220,6 +260,154 @@ function isValidAdminPassword(value) {
 function isValidEmail(value) {
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return typeof value === 'string' && emailPattern.test(value.trim());
+}
+
+function getSalesCount() {
+  const rawValue = PropertiesService
+    .getScriptProperties()
+    .getProperty(SALES_COUNT_PROPERTY_KEY);
+  const numericValue = Number(rawValue);
+
+  if (Number.isFinite(numericValue) && numericValue >= 0) {
+    return Math.floor(numericValue);
+  }
+
+  return DEFAULT_SALES_COUNT;
+}
+
+function getDotBlueSpawnFrequencyRange() {
+  const rawValue = PropertiesService
+    .getScriptProperties()
+    .getProperty(DOT_BLUE_RANGE_PROPERTY_KEY);
+
+  if (!rawValue) {
+    return DEFAULT_DOT_BLUE_RANGE;
+  }
+
+  try {
+    return normalizeDotBlueSpawnFrequencyRange(JSON.parse(rawValue));
+  } catch (error) {
+    console.error('Dot_blue 범위 설정 읽기 실패:', error.toString());
+    return DEFAULT_DOT_BLUE_RANGE;
+  }
+}
+
+function getTickerItemsByLanguage() {
+  const rawValue = PropertiesService
+    .getScriptProperties()
+    .getProperty(TICKER_ITEMS_PROPERTY_KEY);
+
+  if (!rawValue) {
+    return createEmptyTickerItemsByLanguageMap();
+  }
+
+  try {
+    return normalizeTickerItemsByLanguageMap(JSON.parse(rawValue));
+  } catch (error) {
+    console.error('뉴스 ticker 설정 읽기 실패:', error.toString());
+    return createEmptyTickerItemsByLanguageMap();
+  }
+}
+
+function createEmptyTickerItemsByLanguageMap() {
+  const itemsByLanguage = {};
+
+  for (let index = 0; index < SUPPORTED_LANGUAGES.length; index += 1) {
+    itemsByLanguage[SUPPORTED_LANGUAGES[index]] = [];
+  }
+
+  return itemsByLanguage;
+}
+
+function normalizeTickerItemsByLanguageMap(value) {
+  const nextItemsByLanguage = createEmptyTickerItemsByLanguageMap();
+
+  if (!value || typeof value !== 'object') {
+    return nextItemsByLanguage;
+  }
+
+  for (let index = 0; index < SUPPORTED_LANGUAGES.length; index += 1) {
+    const language = SUPPORTED_LANGUAGES[index];
+    const items = value[language];
+
+    if (!Array.isArray(items)) {
+      continue;
+    }
+
+    nextItemsByLanguage[language] = items.filter(function(item) {
+      return typeof item === 'string';
+    });
+  }
+
+  return nextItemsByLanguage;
+}
+
+function normalizeDotBlueSpawnFrequencyRange(value) {
+  const min = Number(value && value.min);
+  const max = Number(value && value.max);
+
+  if (!Number.isFinite(min) || !Number.isFinite(max) || min <= 0 || max <= 0) {
+    return DEFAULT_DOT_BLUE_RANGE;
+  }
+
+  return {
+    min: Math.min(min, max),
+    max: Math.max(min, max)
+  };
+}
+
+function normalizeSiteSettings(siteSettings) {
+  const notificationEmail = isValidEmail(siteSettings && siteSettings.notificationEmail)
+    ? siteSettings.notificationEmail.trim()
+    : '';
+  const salesCount = Number(siteSettings && siteSettings.salesCount);
+
+  return {
+    notificationEmail: notificationEmail,
+    salesCount: Number.isFinite(salesCount) && salesCount >= 0 ? Math.floor(salesCount) : DEFAULT_SALES_COUNT,
+    dotBlueSpawnFrequencyRange: normalizeDotBlueSpawnFrequencyRange(siteSettings && siteSettings.dotBlueSpawnFrequencyRange),
+    tickerItemsByLanguage: normalizeTickerItemsByLanguageMap(siteSettings && siteSettings.tickerItemsByLanguage)
+  };
+}
+
+function validateSiteSettings(siteSettings) {
+  if (!siteSettings || typeof siteSettings !== 'object') {
+    return {
+      ok: false,
+      code: 'INVALID_SITE_SETTINGS',
+      message: '저장할 관리자 설정 형식이 올바르지 않습니다.'
+    };
+  }
+
+  if (siteSettings.notificationEmail && !isValidEmail(siteSettings.notificationEmail)) {
+    return {
+      ok: false,
+      code: 'INVALID_NOTIFICATION_EMAIL',
+      message: '알림 수신 메일 주소 형식이 올바르지 않습니다.'
+    };
+  }
+
+  const salesCount = Number(siteSettings.salesCount);
+
+  if (!Number.isFinite(salesCount) || salesCount < 0) {
+    return {
+      ok: false,
+      code: 'INVALID_SALES_COUNT',
+      message: '판매 수치는 0 이상의 숫자여야 합니다.'
+    };
+  }
+
+  const normalizedDotBlueRange = normalizeDotBlueSpawnFrequencyRange(siteSettings.dotBlueSpawnFrequencyRange);
+
+  if (!normalizedDotBlueRange || normalizedDotBlueRange.min <= 0 || normalizedDotBlueRange.max <= 0) {
+    return {
+      ok: false,
+      code: 'INVALID_DOT_BLUE_RANGE',
+      message: 'Dot_blue 발생 빈도는 1 이상의 숫자로 입력해야 합니다.'
+    };
+  }
+
+  return null;
 }
 
 function getStatusColumnIndex(sheet) {

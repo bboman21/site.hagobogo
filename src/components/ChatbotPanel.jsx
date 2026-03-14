@@ -18,10 +18,6 @@ export default function ChatbotPanel({ copy, questions = [], onClose, onOpenInqu
     }, [onClose]);
 
     useEffect(() => {
-        setSelectedQuestionId(null);
-    }, [questions]);
-
-    useEffect(() => {
         const scrollY = window.scrollY;
         const originalBodyStyle = {
             overflow: document.body.style.overflow,

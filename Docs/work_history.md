@@ -1,9 +1,35 @@
 # 작업 이력
 
-## 2026-03-11 12:20 - admin 화면 타이틀 텍스트 정의 위치 확인
-- 관리자 페이지(`AdminPage.jsx`) 내 각 섹션 타이틀 텍스트의 정의 위치를 확인하여 보고
-- 위치 정보: `src/components/AdminPage.jsx` (L207, L254, L290, L320, L369)
+> [!NOTE]
+> 모든 작업 이력은 최신 날짜와 시간이 상단에 오도록 기록합니다.
 
+## 2026-03-14 10:00 - GitHub Actions 빌드 환경 변수 주입 확장
+- `.github/workflows/deploy.yml`의 `.env.production` 생성 단계에 `VITE_ADMIN_SETTINGS_API_URL`도 함께 기록되도록 추가
+- 이제 GitHub Repository Secrets에 `VITE_ADMIN_SETTINGS_API_URL`만 등록하면 GitHub Pages 빌드 시 관리자 설정 API 주소도 프론트 번들에 주입되도록 정리
+
+## 2026-03-14 09:51 - 관리자 인증 및 전역 설정 구조 개편
+- 프론트 하드코딩 관리자 비밀번호와 브라우저 저장소 기반 설정 저장을 제거하고, Apps Script를 기준으로 관리자 인증과 사이트 설정 저장 흐름을 다시 연결
+- 관리자 페이지는 서버 비밀번호 검증 후 전체 설정을 불러오고 저장하도록 변경했으며, 메인 대시보드는 공개 설정을 읽어 뉴스 ticker, 판매 수치, Dot_blue 빈도를 반영하도록 수정
+- `VITE_ADMIN_SETTINGS_API_URL` 환경 변수를 추가해 문의 API와 관리자 설정 API 역할을 분리하고, 관련 예시 파일과 README 설명도 함께 갱신
+- `useDotEngine`, `useDotEmptyEngine`, `DotEngine`, `DotBlueEngine`, `ChatbotPanel`, `vite.config.js`를 정리해 `npm run lint`, `npm run build`가 모두 통과하도록 보완
+
+## 2026-03-14 09:38 - 작업 이력(work_history.md) 최신순 정렬 완료
+- `Docs/work_history.md` 파일의 모든 내용을 최신 날짜/시간이 상류(상단)에 오도록 전면 재정렬
+- 앞으로 모든 기록은 상단에 추가한다는 운영 규칙을 문서 상단에 명시
+- 정렬 과정에서 데이터 유실 없이 모든 과거 이력을 역순으로 재배치 완료
+
+## 2026-03-14 09:35 - 관리자 기능 검수 및 수정 계획 문서 작성
+- 관리자 인증, 관리자 설정 저장 위치, API 환경 변수 충돌, 린트 오류, 브라우저 전용 초기화 문제를 묶어 전체 검수 및 수정 계획 문서를 새로 작성
+- 실제 코드 수정 전에 무엇을 어떤 순서로 고칠지, 왜 고쳐야 하는지, 어떤 기준으로 검수할지를 초보자도 이해하기 쉬운 형태로 정리
+- 기획안 문서는 Docs/admin_review_and_fix_plan.md 에 작성
+
+## 2026-03-14 09:30 - 'lint' 개념 설명
+- npm run lint와 npm run build의 차이점에 대해 대장님께 설명
+- 린트(lint)가 코드의 품질과 스타일을 검사하는 도구임을 안내
+
+## 2026-03-14 09:27 - 전체 코드 리뷰 및 검증 진행
+- 현재 작업본 전체를 대상으로 `npm run lint`, `npm run build`를 실행해 정적 검사와 빌드 가능 여부를 확인
+- 프론트엔드, 관리자 페이지, 문의 전송 API, 공용 설정 유틸을 순서대로 읽으며 실제 운영 중 오류로 이어질 수 있는 결함 후보를 비판적으로 점검
 
 ## 2026-03-11 11:54 - 뉴스정보 입력창을 /Space 토큰형 편집 UI로 전환
 - 기존 textarea 기반 입력 대신 언어별 뉴스정보 입력창을 토큰형 편집 UI로 바꿔 `/Space`가 실제 안내 표식처럼 보이도록 변경

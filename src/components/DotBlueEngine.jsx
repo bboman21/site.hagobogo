@@ -1,16 +1,12 @@
-import React from 'react';
 import dotHeadBlue from '../../assets/svg/dot_head_blue.svg';
 import useDotEngine from '../hooks/useDotEngine';
 import DotItem from './DotItem';
-import { getDotBlueSpawnFrequencyRange } from '../utils/adminSettings';
 
-const COLLISION_FADE_DURATION_MS = 1000;
 const ONE_HOUR_MS = 60 * 60 * 1000;
 
-export default function DotBlueEngine({ onHit, targetCenter, collisionRadius }) {
-    const dotBlueSpawnFrequencyRange = getDotBlueSpawnFrequencyRange();
-    const minSpawnDelayMs = ONE_HOUR_MS / dotBlueSpawnFrequencyRange.max;
-    const maxSpawnDelayMs = ONE_HOUR_MS / dotBlueSpawnFrequencyRange.min;
+export default function DotBlueEngine({ onHit, targetCenter, collisionRadius, spawnFrequencyRange }) {
+    const minSpawnDelayMs = ONE_HOUR_MS / spawnFrequencyRange.max;
+    const maxSpawnDelayMs = ONE_HOUR_MS / spawnFrequencyRange.min;
     const dots = useDotEngine(onHit, collisionRadius, {
         speedMultiplier: 0.5,
         accelerationGainPerStep: 1.05,
@@ -28,9 +24,6 @@ export default function DotBlueEngine({ onHit, targetCenter, collisionRadius }) 
                 const rotation = (dot.angle * 180) / Math.PI + 180;
                 const progress = (dot.distance - collisionRadius) / (dot.initialDistance - collisionRadius);
                 const currentScale = 0.1 + 0.9 * Math.max(0, progress);
-                const opacity = dot.collidedAt == null
-                    ? 1
-                    : Math.max(0, 1 - (performance.now() - dot.collidedAt) / COLLISION_FADE_DURATION_MS);
 
                 return (
                     <DotItem
@@ -40,7 +33,7 @@ export default function DotBlueEngine({ onHit, targetCenter, collisionRadius }) 
                         rotation={rotation}
                         scale={currentScale}
                         tailLength={dot.tailLength}
-                        opacity={opacity}
+                        opacity={dot.opacity}
                         headImage={dotHeadBlue}
                         alt="blue dot"
                         headSize={120}
